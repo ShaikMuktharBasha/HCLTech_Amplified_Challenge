@@ -99,6 +99,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const profile = new ProfileComponent();
   const settings = new SettingsComponent();
 
+  // Force logout on page load to ensure entering the link always prompts signup/signin
+  store.logout();
+
   // 3. Sync AI Engine with stored configurations
   const initialState = store.loadFromStorage();
   aiEngine.updateSettings(initialState.settings.engine, initialState.settings.groqKey);
