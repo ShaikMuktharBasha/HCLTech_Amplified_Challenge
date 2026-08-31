@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AetherPath // AI Personalized Learning Path Recommender</title>
+  <!-- SEO Meta Tags -->
+  <meta name="description"
+    content="AetherPath is an intelligent AI-powered personalized learning assistant that builds tailored roadmaps, tracks your progress, and adapts to your career goals.">
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Styles -->
+  <link rel="stylesheet" href="/src/style.css">
+</head>
+
+<body>
+  <!-- Animated background glows -->
+  <div class="bg-glow bg-glow-1"></div>
+  <div class="bg-glow bg-glow-2"></div>
+  <div class="bg-glow bg-glow-3"></div>
+
+  <!-- LANDING PAGE VIEW -->
+  <div id="landing-view" class="landing-container animate-fade-in">
+    <div class="landing-hero glass-panel">
+      <div class="landing-brand">
+        <div class="brand-logo">
+          <i data-lucide="sparkles"></i>
+        </div>
+        <span class="brand-name">AetherPath</span>
+      </div>
+      <h1 class="landing-hero-title">Design Your Future Learning</h1>
+      <p class="landing-hero-desc">An intelligent learning assistant that maps your career goals, detects your skill gaps, and outlines a step-by-step personalized learning path loaded with curated resources and hands-on projects.</p>
+      
+      <div class="landing-actions">
+        <button class="btn btn-primary btn-with-icon" id="landing-btn-get-started">
+          <i data-lucide="compass"></i> Get Started
+        </button>
+        <button class="btn btn-secondary" id="landing-btn-login">Sign In</button>
+      </div>
+
+      <div class="landing-features">
+        <div class="landing-feature-card">
+          <i data-lucide="bot"></i>
+          <h4>AI Coach Guidance</h4>
+          <p>Converse with Aetheria to refine and sequence your goals.</p>
+        </div>
+        <div class="landing-feature-card">
+          <i data-lucide="activity"></i>
+          <h4>Skill Gap Diagnostics</h4>
+          <p>Identify missing competencies required for your dream job.</p>
+        </div>
+        <div class="landing-feature-card">
+          <i data-lucide="milestone"></i>
+          <h4>Milestone Maps</h4>
+          <p>Enforce prerequisites and track progress on real projects.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AUTHENTICATION OVERLAY -->
+  <div id="auth-overlay" class="modal-overlay">
+    <div class="auth-card glass-panel">
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="auth-tab-btn-login">Login</button>
+        <button class="auth-tab" id="auth-tab-btn-signup">Sign Up</button>
+      </div>
+      <div class="auth-body">
+        <form id="auth-form">
+          <div class="form-group">
+            <label for="auth-email">Email Address</label>
+            <input type="email" id="auth-email" required placeholder="name@domain.com">
+          </div>
+          <div class="form-group">
+            <label for="auth-password">Password</label>
+            <input type="password" id="auth-password" required placeholder="••••••••">
+          </div>
+          <div class="form-group signup-only hidden" id="signup-confirm-group">
+            <label for="auth-confirm-password">Confirm Password</label>
+            <input type="password" id="auth-confirm-password" placeholder="••••••••">
+          </div>
+          <button type="submit" class="btn btn-primary w-full" id="auth-submit-btn" style="margin-top: 10px;">Login</button>
+          <div class="auth-divider"><span>or</span></div>
+          <button type="button" class="btn btn-secondary w-full btn-with-icon" id="auth-google-btn">
+            <svg class="google-icon" viewBox="0 0 24 24" width="16" height="16" style="vertical-align: middle; margin-right: 4px;">
+              <path fill="#EA4335" d="M12.24 10.285V14.4h6.887c-.648 2.41-2.519 4.114-5.136 4.114-3.555 0-6.437-2.882-6.437-6.437s2.882-6.437 6.437-6.437c1.54 0 2.946.549 4.045 1.457l3.073-3.073C19.167 2.127 15.93 1 12.24 1 6.033 1 12.24s5.033 11.24 11.24 11.24c5.898 0 10.87-4.24 10.87-11.24 0-.768-.068-1.505-.195-2.227H12.24z"/>
+            </svg> Continue with Google
+          </button>
+        </form>
+      </div>
+      <button class="modal-close auth-close-btn" id="auth-close-btn">&times;</button>
+    </div>
+  </div>
+
+  <!-- PROFILE SETUP WIZARD (ONBOARDING) -->
+  <div id="onboarding-overlay" class="onboarding-container hidden">
+    <div class="onboarding-card glass-panel animate-fade-in">
+      <div class="onboarding-header">
+        <h2>Setup Your Learning Profile</h2>
+        <div class="onboarding-steps">
+          <div class="step-indicator active" data-step="1">1</div>
+          <div class="step-line"></div>
+          <div class="step-indicator" data-step="2">2</div>
+          <div class="step-line"></div>
+          <div class="step-indicator" data-step="3">3</div>
+        </div>
+      </div>
+      <div class="onboarding-body">
+        
+        <!-- Step 1: Goals -->
+        <div class="onboarding-step-pane active" data-step="1">
+          <h3>Step 1: Career Direction & Interests</h3>
+          <p class="pane-subtitle">Choose your primary field to let the AI analyze matching resources</p>
+          <div class="form-group" style="margin-top: 15px;">
+            <label for="onboarding-track">Primary Track Goal</label>
+            <select id="onboarding-track">
+              <option value="frontend" selected>Frontend Web Development</option>
+              <option value="backend">Backend Web Development</option>
+              <option value="datascience">Data Science & Analytics</option>
+              <option value="aiml">AI & Machine Learning Engineering</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="onboarding-interests">Specific Interests (comma separated)</label>
+            <input type="text" id="onboarding-interests" value="JavaScript, React, App Building, Styling">
+          </div>
+          <div class="form-group">
+            <label for="onboarding-timeframe">Target Timeframe</label>
+            <select id="onboarding-timeframe">
+              <option value="3 months">Accelerated (3 Months)</option>
+              <option value="6 months" selected>Standard (6 Months)</option>
+              <option value="12 months">Self-paced (12 Months)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Step 2: Experience & History -->
+        <div class="onboarding-step-pane" data-step="2">
+          <h3>Step 2: Experience & Existing Background</h3>
+          <p class="pane-subtitle">Help the AI identify skills you already have to bypass introductory courses</p>
+          <div class="form-group" style="margin-top: 15px;">
+            <label for="onboarding-level">Current Experience Level</label>
+            <select id="onboarding-level">
+              <option value="Beginner" selected>Beginner (Little or no coding background)</option>
+              <option value="Intermediate">Intermediate (Understand functions, loops, basic scripts)</option>
+              <option value="Advanced">Advanced (Professional engineer / technical degree)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="onboarding-history">Skills You Already Have (comma separated)</label>
+            <input type="text" id="onboarding-history" placeholder="e.g. HTML, CSS, JavaScript" value="">
+          </div>
+        </div>
+
+        <!-- Step 3: Commitment & Style -->
+        <div class="onboarding-step-pane" data-step="3">
+          <h3>Step 3: Commitment & Learning Style</h3>
+          <p class="pane-subtitle">Customize how the sequences are structured and scheduled daily</p>
+          <div class="form-group" style="margin-top: 15px;">
+            <label for="onboarding-commitment">Weekly Time Available</label>
+            <select id="onboarding-commitment">
+              <option value="3-5">Light (3-5 hours/week)</option>
+              <option value="5-10" selected>Steady (5-10 hours/week)</option>
+              <option value="10-20">Dedicated (10-20 hours/week)</option>
+              <option value="20+">Intense (20+ hours/week)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="onboarding-style">Preferred Learning Style</label>
+            <select id="onboarding-style">
+              <option value="practical" selected>Project-focused (Hands-on labs & repositories)</option>
+              <option value="balanced">Balanced (Mix of videos and exercises)</option>
+              <option value="theoretical">Concept-focused (In-depth documentation & syntax reads)</option>
+            </select>
+          </div>
+        </div>
+
+      </div>
+      <div class="onboarding-footer">
+        <button class="btn btn-secondary hidden" id="onboarding-prev-btn">Back</button>
+        <button class="btn btn-primary btn-with-icon" id="onboarding-next-btn">Next <i data-lucide="arrow-right"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="app-layout hidden" id="workspace-view">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-logo">
+          <i data-lucide="sparkles"></i>
+        </div>
+        <span class="brand-name">AetherPath</span>
+      </div>
+
+      <nav class="nav-menu">
+        <button class="nav-item active" data-tab="dashboard" id="btn-tab-dashboard">
+          <i data-lucide="layout-dashboard"></i>
+          <span>Dashboard</span>
+        </button>
+        <button class="nav-item" data-tab="chat" id="btn-tab-chat">
+          <i data-lucide="message-square-code"></i>
+          <span>AI Coach</span>
+        </button>
+        <button class="nav-item" data-tab="roadmap" id="btn-tab-roadmap">
+          <i data-lucide="milestone"></i>
+          <span>Roadmap</span>
+        </button>
+        <button class="nav-item" data-tab="profile" id="btn-tab-profile">
+          <i data-lucide="user-cog"></i>
+          <span>Profile</span>
+        </button>
+        <button class="nav-item" data-tab="settings" id="btn-tab-settings">
+          <i data-lucide="settings"></i>
+          <span>Settings</span>
+        </button>
+      </nav>
+
+      <div class="user-badge-container">
+        <div class="user-avatar">AP</div>
+        <div class="user-info">
+          <div class="user-name" id="badge-user-name">Pathfinder</div>
+          <div class="user-level" id="badge-user-level">Beginner</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="content-area">
+      <!-- Top header bar -->
+      <header class="app-header">
+        <div class="header-left">
+          <h1 class="page-title" id="page-title">Dashboard</h1>
+          <p class="page-subtitle" id="page-subtitle">Track your learning journey and next actions</p>
+        </div>
+        <div class="header-right">
+          <div class="active-path-tag glass-panel">
+            <span class="label">Current Path:</span>
+            <span class="value" id="header-active-path">Not Started</span>
+          </div>
+          <button class="btn btn-secondary btn-icon" id="header-theme-toggle" title="Toggle Theme">
+            <i data-lucide="moon"></i>
+          </button>
+        </div>
+      </header>
+
+      <!-- View Containers -->
+      <div class="view-container">
+
+        <!-- DASHBOARD VIEW -->
+        <section class="view-panel active" id="dashboard-panel">
+          <!-- Overview Cards -->
+          <div class="metrics-grid">
+            <div class="metric-card glass-panel animate-fade-in">
+              <div class="metric-icon primary">
+                <i data-lucide="trending-up"></i>
+              </div>
+              <div class="metric-info">
+                <h3>Overall Progress</h3>
+                <div class="metric-value-row">
+                  <span class="value" id="dashboard-progress-pct">0%</span>
+                  <span class="sub" id="dashboard-progress-ratio">0/0 Tasks</span>
+                </div>
+                <div class="progress-bar-container">
+                  <div class="progress-bar-fill" id="dashboard-progress-fill" style="width: 0%"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="metric-card glass-panel animate-fade-in" style="animation-delay: 0.1s;">
+              <div class="metric-icon secondary">
+                <i data-lucide="graduation-cap"></i>
+              </div>
+              <div class="metric-info">
+                <h3>Completed Courses</h3>
+                <div class="metric-value-row">
+                  <span class="value" id="dashboard-completed-courses">0</span>
+                  <span class="sub">Resources finished</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="metric-card glass-panel animate-fade-in" style="animation-delay: 0.2s;">
+              <div class="metric-icon warning">
+                <i data-lucide="award"></i>
+              </div>
+              <div class="metric-info">
+                <h3>Milestones Met</h3>
+                <div class="metric-value-row">
+                  <span class="value" id="dashboard-completed-milestones">0</span>
+                  <span class="sub" id="dashboard-total-milestones">/ 0 Total</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Main Dashboard Details Grid -->
+          <div class="dashboard-details-grid">
+            <!-- Left Column: Skill Matrix & Skill Gap -->
+            <div class="dashboard-left-column">
+              <!-- Skill Matrix -->
+              <div class="detail-card glass-panel animate-fade-in" style="animation-delay: 0.3s;">
+                <div class="card-header">
+                  <h2>Skill Matrix</h2>
+                  <span class="tag">Visualized Proficiency</span>
+                </div>
+                <div class="card-body skill-chart-wrapper">
+                  <!-- Custom SVG Chart Container -->
+                  <div class="svg-chart-container" id="skills-chart-container">
+                    <!-- JS will dynamically render a beautiful radar/bar chart here -->
+                    <div class="no-data-msg">
+                      <i data-lucide="activity"></i>
+                      <p>Select or generate a path to visualize your skill development</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Skill-Gap Diagnostics -->
+              <div class="detail-card glass-panel animate-fade-in" style="animation-delay: 0.35s; margin-top: 20px;" id="dashboard-skillgap-card">
+                <div class="card-header">
+                  <h2>Skill-Gap Diagnostics</h2>
+                  <span class="tag" style="background: rgba(var(--warning-hsl), 0.15); color: var(--warning); border-color: rgba(var(--warning-hsl), 0.3);">AI Diagnostic</span>
+                </div>
+                <div class="card-body" id="skills-gap-container">
+                  <p class="empty-list">Complete onboarding or select a path to analyze skill gaps.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Column: Next Best Action & Core Milestones -->
+            <div class="dashboard-sidebar-grid">
+              <!-- Next Best Action -->
+              <div class="detail-card glass-panel action-card animate-fade-in" style="animation-delay: 0.4s;">
+                <div class="card-header">
+                  <h2>Next Recommended Action</h2>
+                  <i data-lucide="compass" class="glow-icon pulse"></i>
+                </div>
+                <div class="card-body">
+                  <div class="next-action-content" id="next-action-container">
+                    <p class="empty-action">Describe your goals to the AI Coach to start your learning path.</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Upcoming Milestones -->
+              <div class="detail-card glass-panel animate-fade-in" style="animation-delay: 0.5s;">
+                <div class="card-header">
+                  <h2>Core Milestones</h2>
+                  <span class="milestone-counter" id="dashboard-milestone-counter">0/0</span>
+                </div>
+                <div class="card-body scrollable-y list-container" id="dashboard-milestones-list">
+                  <p class="empty-list">No roadmap active yet.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- CHAT VIEW -->
+        <section class="view-panel" id="chat-panel">
+          <div class="chat-layout">
+            <div class="chat-history-container glass-panel">
+              <div class="chat-header">
+                <div class="chat-coach-profile">
+                  <div class="coach-avatar">
+                    <i data-lucide="bot"></i>
+                  </div>
+                  <div class="coach-details">
+                    <h3>Aetheria</h3>
+                    <span class="coach-status"><span class="dot"></span> AI Learning Architect</span>
+                  </div>
+                </div>
+                <button class="btn btn-tertiary btn-icon-small" id="chat-clear-history" title="Clear Conversation">
+                  <i data-lucide="trash-2"></i>
+                </button>
+              </div>
+
+              <!-- Message Stream -->
+              <div class="message-stream" id="chat-message-stream">
+                <!-- Welcome Message -->
+                <div class="chat-message bot animate-fade-in">
+                  <div class="msg-avatar"><i data-lucide="bot"></i></div>
+                  <div class="msg-content">
+                    <p>Hello! I'm <strong>Aetheria</strong>, your personal learning path assistant. I'm here to help you
+                      sequence and target your learning objectives.</p>
+                    <p>What skills or career goals are you focusing on today? For example, you can tell me:
+                      <em>"I want to learn frontend development starting from scratch"</em> or
+                      <em>"I want to transition into Data Science and build Python projects."</em>
+                    </p>
+                  </div>
+                  <div class="msg-time">Just Now</div>
+                </div>
+              </div>
+
+              <!-- Floating Quick Replies -->
+              <div class="quick-replies-container" id="chat-quick-replies">
+                <button class="quick-reply-btn" data-query="Recommend a Full Stack Web Developer path from scratch.">
+                  <i data-lucide="code"></i> Full Stack Web Dev
+                </button>
+                <button class="quick-reply-btn"
+                  data-query="Generate a path to learn AI & Machine Learning. I have basic Python knowledge.">
+                  <i data-lucide="brain-circuit"></i> AI & ML Engineering
+                </button>
+                <button class="quick-reply-btn" data-query="I want to learn Data Science. I am an absolute beginner.">
+                  <i data-lucide="bar-chart-2"></i> Data Science
+                </button>
+              </div>
+
+              <!-- Chat Input Panel -->
+              <div class="chat-input-bar">
+                <textarea class="chat-input" id="chat-text-input"
+                  placeholder="Type your learning goals, background, or ask questions about your path..."
+                  rows="1"></textarea>
+                <button class="btn btn-primary btn-icon" id="chat-send-btn">
+                  <i data-lucide="send"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ROADMAP VIEW -->
+        <section class="view-panel" id="roadmap-panel">
+          <div class="roadmap-layout">
+            <!-- Roadmap Configurations Panel -->
+            <div class="roadmap-config-sidebar glass-panel">
+              <h3>Customize Path</h3>
+              <p class="config-desc">Dynamically adapt your recommendations and timeline</p>
+
+              <div class="config-group">
+                <label class="config-label">Pace & Intensity</label>
+                <div class="btn-segmented">
+                  <button class="segmented-item active" data-config="pace" data-val="standard">Standard</button>
+                  <button class="segmented-item" data-config="pace" data-val="accelerated">Fast Track</button>
+                </div>
+              </div>
+
+              <div class="config-group">
+                <label class="config-label">Focus Area</label>
+                <div class="btn-segmented">
+                  <button class="segmented-item active" data-config="focus" data-val="balanced">Balanced</button>
+                  <button class="segmented-item" data-config="focus" data-val="practical">Hands-On</button>
+                </div>
+              </div>
+
+              <div class="config-group">
+                <label class="config-label">Difficulty Filter</label>
+                <div class="btn-segmented">
+                  <button class="segmented-item active" data-config="level" data-val="all">All</button>
+                  <button class="segmented-item" data-config="level" data-val="core">Core Only</button>
+                </div>
+              </div>
+
+              <div class="config-action-container">
+                <button class="btn btn-secondary w-full" id="roadmap-btn-recalculate">
+                  <i data-lucide="rotate-cw"></i> Recalculate Path
+                </button>
+              </div>
+            </div>
+
+            <!-- Roadmap Visualization Area -->
+            <div class="roadmap-timeline-container glass-panel">
+              <div class="roadmap-timeline-header">
+                <div class="header-left-title">
+                  <h2 id="roadmap-title-display">Structured Learning Roadmap</h2>
+                  <p id="roadmap-desc-display">Generate a path to view resource prerequisites and milestones.</p>
+                </div>
+                <div class="roadmap-stats">
+                  <span class="stat-badge"><i data-lucide="clock"></i> <span id="roadmap-stat-hours">0 hrs</span></span>
+                  <span class="stat-badge"><i data-lucide="folder-git-2"></i> <span id="roadmap-stat-projects">0
+                      Projects</span></span>
+                </div>
+              </div>
+
+              <!-- Main Roadmap Canvas -->
+              <div class="roadmap-canvas" id="roadmap-canvas-container">
+                <div class="empty-roadmap-message">
+                  <i data-lucide="milestone" class="pulse"></i>
+                  <h3>No Active Roadmap</h3>
+                  <p>Ask the AI Coach in the tab below to recommend a roadmap tailored to your experience and goals, or
+                    type a topic to generate it.</p>
+                  <button class="btn btn-primary btn-with-icon" id="roadmap-btn-go-chat">
+                    <i data-lucide="message-square-code"></i> Talk to AI Coach
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- PROFILE VIEW -->
+        <section class="view-panel" id="profile-panel">
+          <div class="profile-layout glass-panel">
+            <div class="profile-header">
+              <div class="avatar-large">AP</div>
+              <div class="profile-title-area">
+                <h2>Learner Profile</h2>
+                <p>Modify your preferences to influence how recommendations are sequenced</p>
+              </div>
+            </div>
+
+            <form class="profile-form" id="profile-edit-form">
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="profile-name">Full Name</label>
+                  <input type="text" id="profile-name" value="Pathfinder Learner">
+                </div>
+
+                <div class="form-group">
+                  <label for="profile-level">Experience Level</label>
+                  <select id="profile-level">
+                    <option value="Beginner" selected>Beginner (No coding experience)</option>
+                    <option value="Intermediate">Intermediate (Understand programming basics)</option>
+                    <option value="Advanced">Advanced (Professional engineer / Specialist)</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="profile-commitment">Weekly Commitment</label>
+                  <select id="profile-commitment">
+                    <option value="3-5">Light (3-5 hours/week)</option>
+                    <option value="5-10" selected>Steady (5-10 hours/week)</option>
+                    <option value="10-20">Dedicated (10-20 hours/week)</option>
+                    <option value="20+">Intense (20+ hours/week)</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="profile-style">Primary Learning Style</label>
+                  <select id="profile-style">
+                    <option value="practical" selected>Project-focused (Coding & Building first)</option>
+                    <option value="balanced">Balanced (Mix of lectures & labs)</option>
+                    <option value="theoretical">In-depth concepts (Tutorials & Books first)</option>
+                  </select>
+                </div>
+
+                <div class="form-group span-2">
+                  <label for="profile-interests">Target Career Goals & Interests (Comma separated)</label>
+                  <input type="text" id="profile-interests"
+                    value="Web Development, JavaScript, React, UI/UX, Portfolio Building">
+                </div>
+
+                <div class="form-group span-2">
+                  <label for="profile-history">Completed Courses & Skills (Already familiar with)</label>
+                  <textarea id="profile-history" rows="3"
+                    placeholder="List any courses, tutorials or programming languages you already know..."></textarea>
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary btn-with-icon" id="profile-save-btn">
+                  <i data-lucide="check"></i> Save & Apply Changes
+                </button>
+              </div>
+            </form>
+          </div>
+        </section>
+
+        <!-- SETTINGS VIEW -->
+        <section class="view-panel" id="settings-panel">
+          <div class="settings-layout glass-panel">
+            <div class="settings-header">
+              <i data-lucide="settings" class="header-icon"></i>
+              <div>
+                <h2>Intelligence Settings</h2>
+                <p>Toggle between simulated AI recommendations and live Groq Cloud API responses.</p>
+              </div>
+            </div>
+
+            <div class="settings-body">
+              <div class="settings-section">
+                <h3>Select Intelligence Engine</h3>
+                <div class="engine-selector">
+                  <div class="engine-option active" id="engine-mock-option" data-engine="mock">
+                    <div class="option-header">
+                      <div class="radio-indicator"></div>
+                      <span class="title">Local Simulator (Default)</span>
+                    </div>
+                    <p class="desc">A fast, rules-based, offline planner with pre-programmed knowledge for fullstack,
+                      data science, and machine learning fields. Recommended for immediate prototyping.</p>
+                  </div>
+
+                  <div class="engine-option" id="engine-groq-option" data-engine="groq">
+                    <div class="option-header">
+                      <div class="radio-indicator"></div>
+                      <span class="title">Groq Cloud Live API</span>
+                    </div>
+                    <p class="desc">Connects the learning assistant directly to Groq to answer custom
+                      questions, explain recommendations, and generate unlimited dynamic learning paths.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="settings-section hidden" id="groq-key-section">
+                <h3>Groq Cloud API Credentials</h3>
+                <div class="form-group">
+                  <label for="settings-groq-key">Groq API Key</label>
+                  <div class="api-key-input-row">
+                    <input type="password" id="settings-groq-key" placeholder="Enter your Groq API key (gsk_...)">
+                    <button class="btn btn-secondary btn-icon" id="settings-toggle-key-visibility" type="button"
+                      title="Show/Hide Key">
+                      <i data-lucide="eye"></i>
+                    </button>
+                  </div>
+                  <p class="help-text">Your API Key is saved locally in your browser's sessionStorage/localStorage and
+                    is never sent to external servers except direct Groq API endpoints.</p>
+                </div>
+
+                <button class="btn btn-secondary btn-with-icon" id="settings-btn-test-key">
+                  <i data-lucide="key-round"></i> Test API Connection
+                </button>
+                <div class="key-test-status" id="key-test-status-msg"></div>
+              </div>
+
+              <div class="settings-section">
+                <h3>Reset & Diagnostics</h3>
+                <p class="desc">Clear browser storage to reset all course progress, path roadmaps, and settings
+                  parameters.</p>
+                <button class="btn btn-danger btn-with-icon" id="settings-btn-reset-app">
+                  <i data-lucide="refresh-cw"></i> Reset Application State
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Detail Dialog / Modal for Course/Project info -->
+  <div class="modal-overlay" id="node-modal">
+    <div class="modal-content glass-panel">
+      <div class="modal-header">
+        <h3 id="modal-node-title">Node Title</h3>
+        <button class="modal-close" id="modal-close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-meta-grid">
+          <div class="meta-item">
+            <span class="label">Type</span>
+            <span class="value" id="modal-node-type">Course</span>
+          </div>
+          <div class="meta-item">
+            <span class="label">Duration</span>
+            <span class="value" id="modal-node-duration">12 hours</span>
+          </div>
+          <div class="meta-item">
+            <span class="label">Difficulty</span>
+            <span class="value" id="modal-node-difficulty">Beginner</span>
+          </div>
+          <div class="meta-item">
+            <span class="label">Estimated Cost</span>
+            <span class="value" id="modal-node-cost">Free</span>
+          </div>
+        </div>
+
+        <div class="modal-description-section">
+          <h4>Overview</h4>
+          <p id="modal-node-description">Description text...</p>
+        </div>
+
+        <div class="modal-skills-section">
+          <h4>Skills Acquired</h4>
+          <div class="skills-tags-list" id="modal-node-skills">
+            <!-- tags will go here -->
+          </div>
+        </div>
+
+        <div class="modal-resources-section">
+          <h4>Learning Resources</h4>
+          <ul class="resources-links-list" id="modal-node-resources">
+            <!-- resources list -->
+          </ul>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="modal-btn-skip">Skip Resource</button>
+        <button class="btn btn-primary" id="modal-btn-toggle-status">Mark as Completed</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JS Code Files -->
+  <script type="module" src="/src/main.js"></script>
+</body>
+
+</html>

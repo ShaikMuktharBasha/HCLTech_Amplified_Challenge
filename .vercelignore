@@ -1,0 +1,11 @@
+# Ignore local development files and folders during Vercel deployment
+.env.local
+.env.*.local
+*.local
+node_modules/
+dist/
+.vercel
+.git/
+.github/
+.agents/
+.gemini/
