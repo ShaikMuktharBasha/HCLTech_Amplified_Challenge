@@ -30,108 +30,104 @@
 
   <!-- LANDING PAGE VIEW -->
   <div id="landing-view" class="landing-container animate-fade-in">
-    <!-- Landing Navigation Bar -->
-    <header class="landing-nav">
-      <div class="landing-brand">
-        <div class="brand-logo" style="background: transparent; box-shadow: none; overflow: hidden; width: 34px; height: 34px;">
-          <img src="/src/logo.jpg" alt="AetherPath Logo" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+    <div class="landing-grid">
+      <!-- Left Column: Copy & Branding -->
+      <div class="landing-left">
+        <div class="landing-brand">
+          <div class="brand-logo" style="background: transparent; box-shadow: none; overflow: hidden; width: 38px; height: 38px;">
+            <img src="/src/logo.jpg" alt="AetherPath Logo" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+          </div>
+          <span class="brand-name" style="font-size: 1.35rem;">AetherPath</span>
         </div>
-        <span class="brand-name">AetherPath</span>
-      </div>
-      <button class="btn btn-secondary" id="landing-btn-login-nav">Sign In</button>
-    </header>
+        
+        <div class="landing-hero-content">
+          <div class="promo-badge">
+            <span class="badge-dot"></span>
+            <span class="badge-text">AI Personalized Learning Path Recommender</span>
+          </div>
+          <h1 class="landing-hero-title">Design Your Learning Path <br><span class="gradient-text">Powered by AI</span></h1>
+          <p class="landing-hero-desc">An intelligent copilot that maps your career goals, detects your capabilities, and generates a step-by-step visual roadmap packed with structured resources and project milestones.</p>
+        </div>
 
-    <div class="landing-hero">
-      <div class="promo-badge">
-        <span class="badge-dot"></span>
-        <span class="badge-text">AI Personalized Learning Path Recommender</span>
+        <!-- Roadmap Flow Illustration -->
+        <div class="landing-preview">
+          <div class="flow-illustration">
+            <div class="flow-node completed">
+              <i data-lucide="check"></i>
+            </div>
+            <div class="flow-node active">
+              <i data-lucide="compass"></i>
+            </div>
+            <div class="flow-node">
+              <i data-lucide="code-2"></i>
+            </div>
+            <div class="flow-node">
+              <i data-lucide="terminal"></i>
+            </div>
+            <div class="flow-node">
+              <i data-lucide="trophy"></i>
+            </div>
+          </div>
+        </div>
+
+        <div class="landing-features">
+          <div class="landing-feature-card">
+            <i data-lucide="bot"></i>
+            <div>
+              <h4>AI Coach Guidance</h4>
+              <p>Converse with Aetheria, our Groq-powered copilot, to outline, refine, and adapt your learning curriculum in real-time.</p>
+            </div>
+          </div>
+          <div class="landing-feature-card">
+            <i data-lucide="activity"></i>
+            <div>
+              <h4>Skill Gap Diagnostics</h4>
+              <p>Analyze your background dynamically to bypass introductory concepts and target missing advanced competencies.</p>
+            </div>
+          </div>
+          <div class="landing-feature-card">
+            <i data-lucide="milestone"></i>
+            <div>
+              <h4>Milestone Maps</h4>
+              <p>Track your sequential progress through prerequisite blocks, curated reference materials, and hands-on repository projects.</p>
+            </div>
+          </div>
+        </div>
       </div>
       
-      <h1 class="landing-hero-title">Design Your Learning Path <br><span class="gradient-text">Powered by AI</span></h1>
-      <p class="landing-hero-desc">An intelligent copilot that maps your career goals, detects your capabilities, and generates a step-by-step visual roadmap packed with structured resources and project milestones.</p>
-      
-      <div class="landing-actions">
-        <button class="btn btn-primary btn-with-icon" id="landing-btn-get-started" style="padding: 14px 28px; font-size: 1rem; border-radius: var(--border-radius-md);">
-          Get Started Free <i data-lucide="arrow-right"></i>
-        </button>
-        <button class="btn btn-secondary" id="landing-btn-login" style="padding: 14px 28px; font-size: 1rem; border-radius: var(--border-radius-md);">
-          Sign In
-        </button>
-      </div>
-
-      <!-- Roadmap Flow Illustration -->
-      <div class="landing-preview">
-        <div class="flow-illustration">
-          <div class="flow-node completed">
-            <i data-lucide="check"></i>
+      <!-- Right Column: Embedded Auth Card -->
+      <div class="landing-right">
+        <div class="auth-card glass-panel">
+          <div class="auth-tabs">
+            <button class="auth-tab active" id="auth-tab-btn-login">Login</button>
+            <button class="auth-tab" id="auth-tab-btn-signup">Sign Up</button>
           </div>
-          <div class="flow-node active">
-            <i data-lucide="compass"></i>
-          </div>
-          <div class="flow-node">
-            <i data-lucide="code-2"></i>
-          </div>
-          <div class="flow-node">
-            <i data-lucide="terminal"></i>
-          </div>
-          <div class="flow-node">
-            <i data-lucide="trophy"></i>
+          <div class="auth-body">
+            <form id="auth-form">
+              <div class="form-group">
+                <label for="auth-email">Email Address</label>
+                <input type="email" id="auth-email" required placeholder="name@domain.com">
+              </div>
+              <div class="form-group">
+                <label for="auth-password">Password</label>
+                <input type="password" id="auth-password" required placeholder="••••••••">
+              </div>
+              <div class="form-group signup-only hidden" id="signup-confirm-group">
+                <label for="auth-confirm-password">Confirm Password</label>
+                <input type="password" id="auth-confirm-password" placeholder="••••••••">
+              </div>
+              <button type="submit" class="btn btn-primary w-full" id="auth-submit-btn" style="margin-top: 10px;">Login</button>
+              <div class="auth-divider"><span>or</span></div>
+              <button type="button" class="btn btn-secondary w-full btn-with-icon" id="auth-google-btn">
+                <svg class="google-icon" viewBox="0 0 24 24" width="16" height="16" style="vertical-align: middle; margin-right: 4px;">
+                  <path fill="#EA4335" d="M12.24 10.285V14.4h6.887c-.648 2.41-2.519 4.114-5.136 4.114-3.555 0-6.437-2.882-6.437-6.437s2.882-6.437 6.437-6.437c1.54 0 2.946.549 4.045 1.457l3.073-3.073C19.167 2.127 15.93 1 12.24 1 6.033 1 12.24s5.033 11.24 11.24 11.24c5.898 0 10.87-4.24 10.87-11.24 0-.768-.068-1.505-.195-2.227H12.24z"/>
+                </svg> Continue with Google
+              </button>
+              <div id="google-btn-container" class="hidden" style="display: flex; justify-content: center; width: 100%;"></div>
+            </form>
           </div>
         </div>
       </div>
-
-      <div class="landing-features">
-        <div class="landing-feature-card">
-          <i data-lucide="bot"></i>
-          <h4>AI Coach Guidance</h4>
-          <p>Converse with Aetheria, our Groq-powered copilot, to outline, refine, and adapt your learning curriculum in real-time.</p>
-        </div>
-        <div class="landing-feature-card">
-          <i data-lucide="activity"></i>
-          <h4>Skill Gap Diagnostics</h4>
-          <p>Analyze your background dynamically to bypass introductory concepts and target missing advanced competencies.</p>
-        </div>
-        <div class="landing-feature-card">
-          <i data-lucide="milestone"></i>
-          <h4>Milestone Maps</h4>
-          <p>Track your sequential progress through prerequisite blocks, curated reference materials, and hands-on repository projects.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- AUTHENTICATION OVERLAY -->
-  <div id="auth-overlay" class="modal-overlay">
-    <div class="auth-card glass-panel">
-      <div class="auth-tabs">
-        <button class="auth-tab active" id="auth-tab-btn-login">Login</button>
-        <button class="auth-tab" id="auth-tab-btn-signup">Sign Up</button>
-      </div>
-      <div class="auth-body">
-        <form id="auth-form">
-          <div class="form-group">
-            <label for="auth-email">Email Address</label>
-            <input type="email" id="auth-email" required placeholder="name@domain.com">
-          </div>
-          <div class="form-group">
-            <label for="auth-password">Password</label>
-            <input type="password" id="auth-password" required placeholder="••••••••">
-          </div>
-          <div class="form-group signup-only hidden" id="signup-confirm-group">
-            <label for="auth-confirm-password">Confirm Password</label>
-            <input type="password" id="auth-confirm-password" placeholder="••••••••">
-          </div>
-          <button type="submit" class="btn btn-primary w-full" id="auth-submit-btn" style="margin-top: 10px;">Login</button>
-          <div class="auth-divider"><span>or</span></div>
-          <button type="button" class="btn btn-secondary w-full btn-with-icon" id="auth-google-btn">
-            <svg class="google-icon" viewBox="0 0 24 24" width="16" height="16" style="vertical-align: middle; margin-right: 4px;">
-              <path fill="#EA4335" d="M12.24 10.285V14.4h6.887c-.648 2.41-2.519 4.114-5.136 4.114-3.555 0-6.437-2.882-6.437-6.437s2.882-6.437 6.437-6.437c1.54 0 2.946.549 4.045 1.457l3.073-3.073C19.167 2.127 15.93 1 12.24 1 6.033 1 12.24s5.033 11.24 11.24 11.24c5.898 0 10.87-4.24 10.87-11.24 0-.768-.068-1.505-.195-2.227H12.24z"/>
-            </svg> Continue with Google
-          </button>
-          <div id="google-btn-container" class="hidden" style="display: flex; justify-content: center; width: 100%;"></div>
-        </form>
-      </div>
-      <button class="modal-close auth-close-btn" id="auth-close-btn">&times;</button>
     </div>
   </div>
 

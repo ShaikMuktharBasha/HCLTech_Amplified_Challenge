@@ -47,7 +47,8 @@ document.addEventListener('DOMContentLoaded', () => {
               const payload = decodeJwt(response.credential);
               if (payload) {
                 store.login(payload.email, payload.name, payload.picture);
-                document.getElementById('auth-overlay').classList.remove('active');
+                const authOverlay = document.getElementById('auth-overlay');
+                if (authOverlay) authOverlay.classList.remove('active');
               }
             }
           });
@@ -253,32 +254,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const openAuth = (mode) => {
     authMode = mode;
-    authOverlay.classList.add('active');
+    if (authOverlay) authOverlay.classList.add('active');
     if (mode === 'signup') {
-      authTabSignup.classList.add('active');
-      authTabLogin.classList.remove('active');
-      signupConfirmGroup.classList.remove('hidden');
-      authSubmitBtn.textContent = 'Create Account';
+      if (authTabSignup) authTabSignup.classList.add('active');
+      if (authTabLogin) authTabLogin.classList.remove('active');
+      if (signupConfirmGroup) signupConfirmGroup.classList.remove('hidden');
+      if (authSubmitBtn) authSubmitBtn.textContent = 'Create Account';
     } else {
-      authTabLogin.classList.add('active');
-      authTabSignup.classList.remove('active');
-      signupConfirmGroup.classList.add('hidden');
-      authSubmitBtn.textContent = 'Login';
+      if (authTabLogin) authTabLogin.classList.add('active');
+      if (authTabSignup) authTabSignup.classList.remove('active');
+      if (signupConfirmGroup) signupConfirmGroup.classList.add('hidden');
+      if (authSubmitBtn) authSubmitBtn.textContent = 'Login';
     }
   };
 
-  landingGetStarted.addEventListener('click', () => openAuth('signup'));
-  landingLogin.addEventListener('click', () => openAuth('login'));
+  if (landingGetStarted) landingGetStarted.addEventListener('click', () => openAuth('signup'));
+  if (landingLogin) landingLogin.addEventListener('click', () => openAuth('login'));
   
   const landingLoginNav = document.getElementById('landing-btn-login-nav');
   if (landingLoginNav) {
     landingLoginNav.addEventListener('click', () => openAuth('login'));
   }
   
-  authClose.addEventListener('click', () => authOverlay.classList.remove('active'));
+  if (authClose) {
+    authClose.addEventListener('click', () => {
+      if (authOverlay) authOverlay.classList.remove('active');
+    });
+  }
   
-  authTabLogin.addEventListener('click', () => openAuth('login'));
-  authTabSignup.addEventListener('click', () => openAuth('signup'));
+  if (authTabLogin) authTabLogin.addEventListener('click', () => openAuth('login'));
+  if (authTabSignup) authTabSignup.addEventListener('click', () => openAuth('signup'));
 
   // Open Sign Up modal automatically on initial load if not logged in
   if (!initialState.isLoggedIn) {
@@ -286,31 +291,35 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Auth Submit logic
-  authForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const email = document.getElementById('auth-email').value;
-    const password = document.getElementById('auth-password').value;
+  if (authForm) {
+    authForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = document.getElementById('auth-email').value;
+      const password = document.getElementById('auth-password').value;
 
-    if (authMode === 'signup') {
-      const confirmPass = document.getElementById('auth-confirm-password').value;
-      if (password !== confirmPass) {
-        alert('Passwords do not match.');
-        return;
+      if (authMode === 'signup') {
+        const confirmPass = document.getElementById('auth-confirm-password').value;
+        if (password !== confirmPass) {
+          alert('Passwords do not match.');
+          return;
+        }
+        store.login(email, email.split('@')[0]);
+      } else {
+        store.login(email, email.split('@')[0]);
       }
-      store.login(email, email.split('@')[0]);
-    } else {
-      store.login(email, email.split('@')[0]);
-    }
-    
-    authOverlay.classList.remove('active');
-    authForm.reset();
-  });
+      
+      if (authOverlay) authOverlay.classList.remove('active');
+      authForm.reset();
+    });
+  }
 
   // Google OAuth Simulation
-  authGoogleBtn.addEventListener('click', () => {
-    store.login('google.user@domain.com', 'Google Explorer');
-    authOverlay.classList.remove('active');
-  });
+  if (authGoogleBtn) {
+    authGoogleBtn.addEventListener('click', () => {
+      store.login('google.user@domain.com', 'Google Explorer');
+      if (authOverlay) authOverlay.classList.remove('active');
+    });
+  }
 
   // 7. Onboarding wizard steps logic
   const onboardingNextBtn = document.getElementById('onboarding-next-btn');
