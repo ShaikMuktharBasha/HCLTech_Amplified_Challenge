@@ -30,7 +30,7 @@ const defaultState = {
   settings: {
     engine: 'mock',
     groqKey: '',
-    googleClientId: ''
+    googleClientId: '289632449735-segq0ho4fah42nrqgp57lbgddin5v1qg.apps.googleusercontent.com'
   },
   theme: 'dark'
 };
@@ -46,6 +46,10 @@ class StateStore {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
         const parsed = JSON.parse(stored);
+        // Fallback to default googleClientId if stored value is empty or missing
+        if (parsed.settings && !parsed.settings.googleClientId && defaultState.settings.googleClientId) {
+          parsed.settings.googleClientId = defaultState.settings.googleClientId;
+        }
         // Ensure structure compatibility
         return { 
           ...defaultState, 
