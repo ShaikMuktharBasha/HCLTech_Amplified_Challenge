@@ -4,14 +4,33 @@ AetherPath is a modern, premium, and interactive web application designed to act
 
 ---
 
-## ✨ Features
+## 🚀 Feature Showcase
 
-*   🤖 **AI Coach Guidance**: Chat in real-time with **Aetheria**, an intelligent learning copilot powered by LLMs (via Groq API / client-side simulation), to outline, adapt, and refine your study curriculum.
-*   ⚡ **Skill Gap Diagnostics**: Analyze your educational and professional background to bypass topics you already know and target missing advanced competencies.
-*   🗺️ **Interactive Milestone Maps**: View a beautifully formatted, sequential node flow chart representing your path, complete with resources (articles, docs, tutorials) and hands-on repository projects.
-*   🔒 **Google OAuth 2.0 Sign-In**: Secure and seamless sign-in using Google Identity Services (GIS), displaying your profile picture and name directly in the dashboard sidebar.
-*   📊 **Student Dashboard**: Track your overall progress, active learning path, milestones completed, hours spent, and easily resume your current node.
-*   ⚙️ **Dynamic Settings Panel**: Configure your own custom Groq API key, choose preferred model types (e.g. Llama 3), customize your learning preferences, or update your Google Client ID.
+AetherPath comes loaded with rich, premium features designed to make learning personalized and highly visual:
+
+### 🤖 AI Coach Guidance (Aetheria)
+*   **Real-time Copilot Chat**: Interact directly with **Aetheria**, our Groq-powered AI learning coach. Ask questions about nodes, clarify confusing topics, or request customization of your generated learning paths.
+*   **Adaptive Curriculum Generation**: Tell Aetheria what you want to learn, and watch her dynamically generate prerequisite modules, topics, and code project challenges tailored to your goals.
+*   **Flexible AI Settings**: Choose from multiple pre-loaded models (like Meta's Llama 3) and adjust temperature or system prompt parameters in the Settings tab.
+
+### ⚡ Skill Gap Diagnostics
+*   **Step-by-Step Onboarding Wizard**: Upon first signup, the wizard guides you to select your career track (e.g., Frontend Developer, AI Engineer, Data Scientist).
+*   **Background Profiling**: Input your existing experience (Beginner, Intermediate, Advanced) and specify weekly time commitments.
+*   **Intelligent Skipping**: AetherPath uses your profile to automatically customize the roadmap, highlighting prerequisites you can skip and focusing on missing competencies.
+
+### 🗺️ Interactive Milestone Maps
+*   **Visual Roadmap Grid**: See your entire career journey laid out as sequential progress nodes. Clicking any node focuses your study space.
+*   **Curated Resources & Projects**: Each milestone node lists handpicked reading materials, video tutorials, official documentation, and a hands-on project description to build in your repository.
+*   **Interactive Node Checkmarking**: Track your progress step-by-step by checking off nodes. Watch your dashboard metrics update in real-time as you check off items!
+
+### 🔒 Google OAuth 2.0 Sign-In
+*   **Modern Auth Panel**: Standard password/email signup & login tab, backed by a beautifully aligned, responsive **Continue with Google** button.
+*   **Client-side Profile Decoding**: Integrates client-side JWT token parsing (Google Identity Services API) to securely read and present user names, emails, and profile picture avatars.
+*   **Dynamic Avatar Rendering**: Displays your Google account profile picture in the sidebar menu and dashboard welcome header once logged in.
+
+### 📊 Student Dashboard & Metrics
+*   **Visual Stat Trackers**: Track your learning progress with key analytics, including **Overall Completion Percentage**, **Milestones Finished**, and **Learning Hours Logged**.
+*   **Quick Resume Action**: Displays your current active path directly on the dashboard home screen with a single click button to jump right back to your next uncompleted node.
 
 ---
 
