@@ -271,6 +271,11 @@ document.addEventListener('DOMContentLoaded', () => {
   authTabLogin.addEventListener('click', () => openAuth('login'));
   authTabSignup.addEventListener('click', () => openAuth('signup'));
 
+  // Open Sign Up modal automatically on initial load if not logged in
+  if (!initialState.isLoggedIn) {
+    openAuth('signup');
+  }
+
   // Auth Submit logic
   authForm.addEventListener('submit', (e) => {
     e.preventDefault();
