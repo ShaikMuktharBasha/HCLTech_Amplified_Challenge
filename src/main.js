@@ -314,12 +314,20 @@ I have loaded your visual milestones and sequenced prerequisites in the **Roadma
   };
 
   // 8. Navigation Menu click bindings
-  document.querySelectorAll('.nav-item').forEach(btn => {
+  document.querySelectorAll('.nav-item[data-tab]').forEach(btn => {
     btn.addEventListener('click', () => {
       const tab = btn.getAttribute('data-tab');
       store.setTab(tab);
     });
   });
+
+  // Logout click binding
+  const logoutBtn = document.getElementById('btn-logout');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', () => {
+      store.logout();
+    });
+  }
 
   // 9. Header Theme Toggle click binding
   const themeToggleBtn = document.getElementById('header-theme-toggle');

@@ -258,6 +258,16 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--primary);
 }
 
+.nav-item.logout-btn {
+  color: var(--danger) !important;
+  margin-top: 12px;
+}
+
+.nav-item.logout-btn:hover {
+  background: rgba(235, 87, 87, 0.08) !important;
+  color: var(--danger) !important;
+}
+
 .user-badge-container {
   display: flex;
   align-items: center;
@@ -1526,6 +1536,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="password"],
 .form-group select,
 .form-group textarea {
   background: rgba(255, 255, 255, 0.03);
@@ -1539,7 +1551,14 @@ h1, h2, h3, h4, h5, h6 {
   transition: all 0.2s ease;
 }
 
+.form-group select option {
+  background-color: var(--bg-secondary);
+  color: var(--text-main);
+}
+
 [data-theme="light"] .form-group input[type="text"],
+[data-theme="light"] .form-group input[type="email"],
+[data-theme="light"] .form-group input[type="password"],
 [data-theme="light"] .form-group select,
 [data-theme="light"] .form-group textarea {
   background: rgba(18, 14, 36, 0.02);
@@ -1547,6 +1566,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .form-group input[type="text"]:focus,
+.form-group input[type="email"]:focus,
+.form-group input[type="password"]:focus,
 .form-group select:focus,
 .form-group textarea:focus {
   border-color: var(--primary);
