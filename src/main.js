@@ -103,6 +103,18 @@ document.addEventListener('DOMContentLoaded', () => {
   const initialState = store.loadFromStorage();
   aiEngine.updateSettings(initialState.settings.engine, initialState.settings.groqKey);
 
+  // Set initial tab from URL path if logged in
+  const getTabFromPath = () => {
+    const path = window.location.pathname.replace(/^\/+/g, '');
+    const validTabs = ['dashboard', 'chat', 'roadmap', 'profile', 'settings'];
+    return validTabs.includes(path) ? path : 'dashboard';
+  };
+
+  const initialTab = getTabFromPath();
+  if (initialTab && initialState.isLoggedIn && initialState.hasCompletedOnboarding) {
+    store.state.currentTab = initialTab;
+  }
+
   // 4. Onboarding wizard step counter
   let onboardingStep = 1;
 
@@ -207,6 +219,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Dynamic Google Sign-In setup
     initGoogleSignIn(state.settings.googleClientId, state.theme);
+
+    // E. Update browser URL path based on current state
+    let targetPath = '/';
+    if (state.isLoggedIn) {
+      if (!state.hasCompletedOnboarding) {
+        targetPath = '/onboarding';
+      } else {
+        targetPath = '/' + state.currentTab;
+      }
+    }
+    if (window.location.pathname !== targetPath) {
+      history.pushState(null, '', targetPath);
+    }
   });
 
   // 6. Landing & Authentication Click Handlers
@@ -423,6 +448,15 @@ I have loaded your visual milestones and sequenced prerequisites in the **Roadma
 
   // 10. Initial render trigger
   store.notify();
+
+  // Listen for browser back/forward navigation
+  window.addEventListener('popstate', () => {
+    const tab = getTabFromPath();
+    const state = store.loadFromStorage();
+    if (state.isLoggedIn && state.hasCompletedOnboarding && state.currentTab !== tab) {
+      store.setTab(tab);
+    }
+  });
 
   // Check and run Google Sign-In if library loads late
   checkGoogleLoaded();
