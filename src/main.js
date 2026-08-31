@@ -269,6 +269,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   landingGetStarted.addEventListener('click', () => openAuth('signup'));
   landingLogin.addEventListener('click', () => openAuth('login'));
+  
+  const landingLoginNav = document.getElementById('landing-btn-login-nav');
+  if (landingLoginNav) {
+    landingLoginNav.addEventListener('click', () => openAuth('login'));
+  }
+  
   authClose.addEventListener('click', () => authOverlay.classList.remove('active'));
   
   authTabLogin.addEventListener('click', () => openAuth('login'));

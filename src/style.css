@@ -1754,8 +1754,8 @@ h1, h2, h3, h4, h5, h6 {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(10, 7, 18, 0.6);
-  backdrop-filter: blur(12px);
+  background: transparent;
+  backdrop-filter: blur(8px);
   z-index: 100;
   display: none;
   align-items: center;
@@ -2011,19 +2011,54 @@ h1, h2, h3, h4, h5, h6 {
 /* Landing Page Hero Grid */
 .landing-container {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   min-height: 100vh;
-  padding: 40px 20px;
+  padding: 30px 20px 80px 20px;
   position: relative;
   z-index: 10;
   overflow-y: auto;
+  background: radial-gradient(circle at 50% 10%, rgba(var(--primary-hsl), 0.12) 0%, rgba(0,0,0,0) 60%),
+              radial-gradient(circle at 10% 85%, rgba(var(--secondary-hsl), 0.08) 0%, rgba(0,0,0,0) 50%);
+}
+
+.landing-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+  background-size: 45px 45px;
+  background-position: center top;
+  mask-image: radial-gradient(ellipse 60% 50% at 50% 30%, #000 70%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 60% 50% at 50% 30%, #000 70%, transparent 100%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Landing Nav Bar */
+.landing-nav {
+  width: 100%;
+  max-width: 1000px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 24px;
+  margin-bottom: 50px;
+  border: 1px solid var(--panel-border);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-radius: var(--border-radius-md);
+  background: rgba(18, 14, 36, 0.3);
 }
 
 .landing-hero {
   max-width: 900px;
   width: 100%;
-  padding: 50px;
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -2061,21 +2096,60 @@ h1, h2, h3, h4, h5, h6 {
   letter-spacing: -0.01em;
 }
 
-.landing-hero-title {
-  font-size: 3rem;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  background: linear-gradient(to right, #ffffff 30%, #a48aff 100%);
+/* Promo Badge */
+.promo-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(var(--primary-hsl), 0.1);
+  border: 1px solid rgba(var(--primary-hsl), 0.2);
+  padding: 6px 14px;
+  border-radius: 99px;
+  margin-bottom: 8px;
+  animation: pulse-border 3s infinite;
+}
+
+@keyframes pulse-border {
+  0%, 100% { border-color: rgba(var(--primary-hsl), 0.2); }
+  50% { border-color: rgba(var(--primary-hsl), 0.5); }
+}
+
+.promo-badge .badge-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--secondary);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--secondary);
+}
+
+.promo-badge .badge-text {
+  font-size: 0.73rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  line-height: 1.1;
-  max-width: 750px;
+}
+
+/* Gradient Text */
+.gradient-text {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.landing-hero-title {
+  font-size: 3.5rem;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1.15;
+  text-align: center;
+  max-width: 800px;
 }
 
 [data-theme="light"] .landing-hero-title {
-  background: linear-gradient(to right, var(--text-main) 30%, var(--primary) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  /* Inherits correctly */
 }
 
 .landing-hero-desc {
@@ -2092,12 +2166,85 @@ h1, h2, h3, h4, h5, h6 {
   margin-bottom: 12px;
 }
 
+/* Mockup preview path */
+.landing-preview {
+  margin-top: 24px;
+  width: 100%;
+  max-width: 800px;
+  height: 180px;
+  border-radius: var(--border-radius-lg);
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(circle at center, rgba(var(--primary-hsl), 0.04) 0%, transparent 70%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid var(--panel-border);
+}
+
+/* Node flow illustration in CSS */
+.flow-illustration {
+  display: flex;
+  align-items: center;
+  gap: 36px;
+  position: relative;
+}
+
+.flow-illustration::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 20px;
+  right: 20px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--secondary), var(--primary), var(--warning));
+  z-index: 1;
+}
+
+.flow-node {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--bg-secondary);
+  border: 2px solid var(--panel-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+  box-shadow: var(--panel-shadow);
+  transition: all 0.3s ease;
+}
+
+.flow-node.active {
+  border-color: var(--primary);
+  box-shadow: 0 0 16px var(--primary-glow);
+}
+
+.flow-node.active i {
+  color: var(--primary);
+}
+
+.flow-node.completed {
+  border-color: var(--secondary);
+  box-shadow: 0 0 16px var(--secondary-glow);
+}
+
+.flow-node.completed i {
+  color: var(--secondary);
+}
+
+.flow-node i {
+  width: 18px;
+  height: 18px;
+  color: var(--text-muted);
+}
+
 .landing-features {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
   width: 100%;
-  border-top: 1px solid var(--panel-border);
   padding-top: 36px;
   margin-top: 12px;
 }

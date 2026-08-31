@@ -30,38 +30,71 @@
 
   <!-- LANDING PAGE VIEW -->
   <div id="landing-view" class="landing-container animate-fade-in">
-    <div class="landing-hero glass-panel">
+    <!-- Landing Navigation Bar -->
+    <header class="landing-nav">
       <div class="landing-brand">
         <div class="brand-logo">
           <i data-lucide="sparkles"></i>
         </div>
         <span class="brand-name">AetherPath</span>
       </div>
-      <h1 class="landing-hero-title">Design Your Future Learning</h1>
-      <p class="landing-hero-desc">An intelligent learning assistant that maps your career goals, detects your skill gaps, and outlines a step-by-step personalized learning path loaded with curated resources and hands-on projects.</p>
+      <button class="btn btn-secondary" id="landing-btn-login-nav">Sign In</button>
+    </header>
+
+    <div class="landing-hero">
+      <div class="promo-badge">
+        <span class="badge-dot"></span>
+        <span class="badge-text">AI Personalized Learning Path Recommender</span>
+      </div>
+      
+      <h1 class="landing-hero-title">Design Your Learning Path <br><span class="gradient-text">Powered by AI</span></h1>
+      <p class="landing-hero-desc">An intelligent copilot that maps your career goals, detects your capabilities, and generates a step-by-step visual roadmap packed with structured resources and project milestones.</p>
       
       <div class="landing-actions">
-        <button class="btn btn-primary btn-with-icon" id="landing-btn-get-started">
-          <i data-lucide="compass"></i> Get Started
+        <button class="btn btn-primary btn-with-icon" id="landing-btn-get-started" style="padding: 14px 28px; font-size: 1rem; border-radius: var(--border-radius-md);">
+          Get Started Free <i data-lucide="arrow-right"></i>
         </button>
-        <button class="btn btn-secondary" id="landing-btn-login">Sign In</button>
+        <button class="btn btn-secondary" id="landing-btn-login" style="padding: 14px 28px; font-size: 1rem; border-radius: var(--border-radius-md);">
+          Sign In
+        </button>
+      </div>
+
+      <!-- Roadmap Flow Illustration -->
+      <div class="landing-preview">
+        <div class="flow-illustration">
+          <div class="flow-node completed">
+            <i data-lucide="check"></i>
+          </div>
+          <div class="flow-node active">
+            <i data-lucide="compass"></i>
+          </div>
+          <div class="flow-node">
+            <i data-lucide="code-2"></i>
+          </div>
+          <div class="flow-node">
+            <i data-lucide="terminal"></i>
+          </div>
+          <div class="flow-node">
+            <i data-lucide="trophy"></i>
+          </div>
+        </div>
       </div>
 
       <div class="landing-features">
         <div class="landing-feature-card">
           <i data-lucide="bot"></i>
           <h4>AI Coach Guidance</h4>
-          <p>Converse with Aetheria to refine and sequence your goals.</p>
+          <p>Converse with Aetheria, our Groq-powered copilot, to outline, refine, and adapt your learning curriculum in real-time.</p>
         </div>
         <div class="landing-feature-card">
           <i data-lucide="activity"></i>
           <h4>Skill Gap Diagnostics</h4>
-          <p>Identify missing competencies required for your dream job.</p>
+          <p>Analyze your background dynamically to bypass introductory concepts and target missing advanced competencies.</p>
         </div>
         <div class="landing-feature-card">
           <i data-lucide="milestone"></i>
           <h4>Milestone Maps</h4>
-          <p>Enforce prerequisites and track progress on real projects.</p>
+          <p>Track your sequential progress through prerequisite blocks, curated reference materials, and hands-on repository projects.</p>
         </div>
       </div>
     </div>
