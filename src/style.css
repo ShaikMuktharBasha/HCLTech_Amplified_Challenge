@@ -2014,7 +2014,7 @@ h1, h2, h3, h4, h5, h6 {
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  padding: 20px;
+  padding: 40px;
   position: relative;
   z-index: 10;
   overflow-y: auto;
@@ -2042,9 +2042,9 @@ h1, h2, h3, h4, h5, h6 {
 /* Split Grid Layout for Landing Page */
 .landing-grid {
   display: grid;
-  grid-template-columns: 1.2fr 1fr;
-  gap: 36px;
-  max-width: 1000px;
+  grid-template-columns: 1.25fr 1fr;
+  gap: 60px;
+  max-width: 1300px;
   width: 100%;
   align-items: center;
   margin: 0 auto;
@@ -2056,7 +2056,7 @@ h1, h2, h3, h4, h5, h6 {
   flex-direction: column;
   align-items: flex-start;
   text-align: left;
-  gap: 14px;
+  gap: 16px;
 }
 
 .landing-right {
@@ -2069,7 +2069,7 @@ h1, h2, h3, h4, h5, h6 {
 /* Adjustments for Title & Desc on Left */
 .landing-left .landing-hero-title {
   text-align: left;
-  font-size: 2.3rem;
+  font-size: 2.8rem;
   max-width: 100%;
   line-height: 1.15;
 }
@@ -2077,9 +2077,9 @@ h1, h2, h3, h4, h5, h6 {
 .landing-left .landing-hero-desc {
   text-align: left;
   max-width: 100%;
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   color: var(--text-muted);
-  line-height: 1.5;
+  line-height: 1.55;
 }
 
 .landing-left .landing-brand {
