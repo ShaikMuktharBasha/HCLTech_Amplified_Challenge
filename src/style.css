@@ -2043,17 +2043,35 @@ h1, h2, h3, h4, h5, h6 {
 /* Landing Nav Bar */
 .landing-nav {
   width: 100%;
-  max-width: 1000px;
+  max-width: 800px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 24px;
-  margin-bottom: 50px;
-  border: 1px solid var(--panel-border);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
+  padding: 8px 18px;
+  margin-bottom: 30px;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border-radius: var(--border-radius-md);
-  background: rgba(18, 14, 36, 0.3);
+  background: rgba(255, 255, 255, 0.75);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.04);
+}
+
+.landing-nav .brand-name {
+  color: #120d2b !important;
+}
+
+.landing-nav .btn-secondary {
+  background: rgba(18, 14, 36, 0.05) !important;
+  border: 1px solid rgba(18, 14, 36, 0.1) !important;
+  color: #120d2b !important;
+  padding: 8px 16px !important;
+  font-size: 0.85rem !important;
+  border-radius: var(--border-radius-sm) !important;
+}
+
+.landing-nav .btn-secondary:hover {
+  background: rgba(18, 14, 36, 0.1) !important;
 }
 
 .landing-hero {
