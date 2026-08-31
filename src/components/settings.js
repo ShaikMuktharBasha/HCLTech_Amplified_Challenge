@@ -17,6 +17,7 @@ export class SettingsComponent {
     this.testStatusMsg = document.getElementById('key-test-status-msg');
     
     this.resetAppBtn = document.getElementById('settings-btn-reset-app');
+    this.googleClientIdInput = document.getElementById('settings-google-client-id');
 
     this.initEvents();
   }
@@ -41,6 +42,14 @@ export class SettingsComponent {
       store.setGroqKey(key);
       aiEngine.updateSettings(store.loadFromStorage().settings.engine, key);
     });
+
+    // Save google client ID on typing
+    if (this.googleClientIdInput) {
+      this.googleClientIdInput.addEventListener('input', () => {
+        const val = this.googleClientIdInput.value.trim();
+        store.setGoogleClientId(val);
+      });
+    }
 
     // Toggle API Key visibility
     this.toggleVisibilityBtn.addEventListener('click', () => {
@@ -105,6 +114,9 @@ export class SettingsComponent {
   render(state) {
     const engine = state.settings.engine;
     this.keyInput.value = state.settings.groqKey || '';
+    if (this.googleClientIdInput) {
+      this.googleClientIdInput.value = state.settings.googleClientId || '';
+    }
 
     // Adjust active visual highlights
     if (engine === 'mock') {

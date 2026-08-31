@@ -12,6 +12,83 @@ import { ProfileComponent } from './components/profile.js';
 import { SettingsComponent } from './components/settings.js';
 
 document.addEventListener('DOMContentLoaded', () => {
+  // Google Sign-In helper functions
+  const decodeJwt = (token) => {
+    try {
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+      }).join(''));
+      return JSON.parse(jsonPayload);
+    } catch (e) {
+      console.error('Failed to decode JWT', e);
+      return null;
+    }
+  };
+
+  let lastGoogleClientId = '';
+
+  const initGoogleSignIn = (clientId, theme) => {
+    const container = document.getElementById('google-btn-container');
+    const mockGoogleBtn = document.getElementById('auth-google-btn');
+    if (!container || !mockGoogleBtn) return;
+
+    if (clientId && window.google) {
+      mockGoogleBtn.classList.add('hidden');
+      container.classList.remove('hidden');
+
+      if (clientId !== lastGoogleClientId) {
+        lastGoogleClientId = clientId;
+        try {
+          window.google.accounts.id.initialize({
+            client_id: clientId,
+            callback: (response) => {
+              const payload = decodeJwt(response.credential);
+              if (payload) {
+                store.login(payload.email, payload.name, payload.picture);
+                document.getElementById('auth-overlay').classList.remove('active');
+              }
+            }
+          });
+        } catch (e) {
+          console.error('Failed to initialize Google accounts client ID', e);
+        }
+      }
+
+      // Re-render button with proper theme/dimensions
+      container.innerHTML = '';
+      try {
+        window.google.accounts.id.renderButton(
+          container,
+          {
+            theme: theme === 'dark' ? 'filled_black' : 'outline',
+            size: 'large',
+            width: mockGoogleBtn.offsetWidth || 300,
+            text: 'signup_with'
+          }
+        );
+        window.google.accounts.id.prompt();
+      } catch (err) {
+        console.error('Failed to render Google button', err);
+      }
+    } else {
+      mockGoogleBtn.classList.remove('hidden');
+      container.classList.add('hidden');
+    }
+  };
+
+  const checkGoogleLoaded = () => {
+    const state = store.loadFromStorage();
+    if (state.settings.googleClientId) {
+      if (window.google) {
+        initGoogleSignIn(state.settings.googleClientId, state.theme);
+      } else {
+        setTimeout(checkGoogleLoaded, 500);
+      }
+    }
+  };
+
   // 1. Initialize Icons
   lucide.createIcons();
 
@@ -104,8 +181,12 @@ document.addEventListener('DOMContentLoaded', () => {
       if (badgeName) badgeName.textContent = state.profile.name;
       if (badgeLevel) badgeLevel.textContent = state.profile.level;
       if (avatarBadge && state.profile.name) {
-        const initials = state.profile.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-        avatarBadge.textContent = initials || 'AP';
+        if (state.userSession && state.userSession.avatarUrl) {
+          avatarBadge.innerHTML = `<img src="${state.userSession.avatarUrl}" alt="${state.profile.name}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
+        } else {
+          const initials = state.profile.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+          avatarBadge.textContent = initials || 'AP';
+        }
       }
     }
 
@@ -123,6 +204,9 @@ document.addEventListener('DOMContentLoaded', () => {
     roadmap.render(state);
     profile.render(state);
     settings.render(state);
+
+    // Dynamic Google Sign-In setup
+    initGoogleSignIn(state.settings.googleClientId, state.theme);
   });
 
   // 6. Landing & Authentication Click Handlers
@@ -339,4 +423,7 @@ I have loaded your visual milestones and sequenced prerequisites in the **Roadma
 
   // 10. Initial render trigger
   store.notify();
+
+  // Check and run Google Sign-In if library loads late
+  checkGoogleLoaded();
 });

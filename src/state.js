@@ -29,7 +29,8 @@ const defaultState = {
   ],
   settings: {
     engine: 'mock',
-    groqKey: ''
+    groqKey: '',
+    googleClientId: ''
   },
   theme: 'dark'
 };
@@ -82,10 +83,13 @@ class StateStore {
   }
 
   // Auth Actions
-  login(email, name = 'Pathfinder') {
+  login(email, name = 'Pathfinder', avatarUrl = null) {
     this.state.isLoggedIn = true;
-    this.state.userSession = { email, name };
+    this.state.userSession = { email, name, avatarUrl };
     this.state.profile.name = name;
+    if (avatarUrl) {
+      this.state.profile.avatarUrl = avatarUrl;
+    }
     this.notify();
   }
 
@@ -135,6 +139,11 @@ class StateStore {
 
   setGroqKey(key) {
     this.state.settings.groqKey = key;
+    this.notify();
+  }
+
+  setGoogleClientId(key) {
+    this.state.settings.googleClientId = key;
     this.notify();
   }
 
