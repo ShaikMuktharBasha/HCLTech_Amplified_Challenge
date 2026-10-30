@@ -1,9 +1,9 @@
 /* ==========================================
-   AETHERPATH SETTINGS COMPONENT
+   AETHERPATH SETTINGS COMPONENT (GROQ API & CONFIGURATION)
    ========================================== */
 
 import { store } from '../state.js';
-import { aiEngine } from '../ai.js';
+import { aiEngine, AIEngine } from '../ai.js';
 
 export class SettingsComponent {
   constructor() {
@@ -11,6 +11,7 @@ export class SettingsComponent {
     this.groqOption = document.getElementById('engine-groq-option');
     this.keySection = document.getElementById('groq-key-section');
     this.keyInput = document.getElementById('settings-groq-key');
+    this.modelSelect = document.getElementById('settings-groq-model');
     
     this.toggleVisibilityBtn = document.getElementById('settings-toggle-key-visibility');
     this.testKeyBtn = document.getElementById('settings-btn-test-key');
@@ -24,24 +25,42 @@ export class SettingsComponent {
 
   initEvents() {
     // Select Mock engine
-    this.mockOption.addEventListener('click', () => {
-      store.setEngine('mock');
-      aiEngine.updateSettings('mock', store.loadFromStorage().settings.groqKey);
-    });
+    if (this.mockOption) {
+      this.mockOption.addEventListener('click', () => {
+        store.setEngine('mock');
+        const st = store.loadFromStorage();
+        aiEngine.updateSettings('mock', st.settings.groqKey, st.settings.groqModel);
+      });
+    }
 
     // Select Groq engine
-    this.groqOption.addEventListener('click', () => {
-      store.setEngine('groq');
-      const key = store.loadFromStorage().settings.groqKey;
-      aiEngine.updateSettings('groq', key);
-    });
+    if (this.groqOption) {
+      this.groqOption.addEventListener('click', () => {
+        store.setEngine('groq');
+        const st = store.loadFromStorage();
+        aiEngine.updateSettings('groq', st.settings.groqKey, st.settings.groqModel);
+      });
+    }
+
+    // Model selection change
+    if (this.modelSelect) {
+      this.modelSelect.addEventListener('change', () => {
+        const selectedModel = this.modelSelect.value;
+        store.setGroqModel(selectedModel);
+        const st = store.loadFromStorage();
+        aiEngine.updateSettings(st.settings.engine, st.settings.groqKey, selectedModel);
+      });
+    }
 
     // Save key on typing
-    this.keyInput.addEventListener('input', () => {
-      const key = this.keyInput.value.trim();
-      store.setGroqKey(key);
-      aiEngine.updateSettings(store.loadFromStorage().settings.engine, key);
-    });
+    if (this.keyInput) {
+      this.keyInput.addEventListener('input', () => {
+        const key = this.keyInput.value.trim();
+        store.setGroqKey(key);
+        const st = store.loadFromStorage();
+        aiEngine.updateSettings(st.settings.engine, key, st.settings.groqModel);
+      });
+    }
 
     // Save google client ID on typing
     if (this.googleClientIdInput) {
@@ -52,56 +71,64 @@ export class SettingsComponent {
     }
 
     // Toggle API Key visibility
-    this.toggleVisibilityBtn.addEventListener('click', () => {
-      const icon = this.toggleVisibilityBtn.querySelector('i');
-      if (this.keyInput.type === 'password') {
-        this.keyInput.type = 'text';
-        icon.setAttribute('data-lucide', 'eye-off');
-      } else {
-        this.keyInput.type = 'password';
-        icon.setAttribute('data-lucide', 'eye');
-      }
-      lucide.createIcons();
-    });
+    if (this.toggleVisibilityBtn && this.keyInput) {
+      this.toggleVisibilityBtn.addEventListener('click', () => {
+        const icon = this.toggleVisibilityBtn.querySelector('i');
+        if (this.keyInput.type === 'password') {
+          this.keyInput.type = 'text';
+          if (icon) icon.setAttribute('data-lucide', 'eye-off');
+        } else {
+          this.keyInput.type = 'password';
+          if (icon) icon.setAttribute('data-lucide', 'eye');
+        }
+        lucide.createIcons();
+      });
+    }
 
-    // Test API Key connection
-    this.testKeyBtn.addEventListener('click', () => this.testGroqConnection());
+    // Test API Key connection with Groq
+    if (this.testKeyBtn) {
+      this.testKeyBtn.addEventListener('click', () => this.testGroqConnection());
+    }
 
     // Reset application
-    this.resetAppBtn.addEventListener('click', () => {
-      if (confirm('CRITICAL: This will reset all your courses progress, custom roadmaps, message logs, and settings. Proceed?')) {
-        store.resetAllState();
-        window.location.reload();
-      }
-    });
+    if (this.resetAppBtn) {
+      this.resetAppBtn.addEventListener('click', () => {
+        if (confirm('CRITICAL: This will reset all your course progress, custom roadmaps, message logs, and settings. Proceed?')) {
+          store.resetAllState();
+          window.location.reload();
+        }
+      });
+    }
   }
 
   async testGroqConnection() {
-    const key = this.keyInput.value.trim();
+    const key = this.keyInput ? this.keyInput.value.trim() : '';
     if (!key) {
       this.testStatusMsg.className = 'key-test-status error';
-      this.testStatusMsg.textContent = 'Please enter an API Key first.';
+      this.testStatusMsg.textContent = 'Please enter a Groq API Key first (starts with gsk_).';
       return;
     }
 
+    const model = this.modelSelect ? this.modelSelect.value : 'llama-3.3-70b-versatile';
+
     this.testStatusMsg.className = 'key-test-status';
     this.testStatusMsg.style.color = 'var(--text-muted)';
-    this.testStatusMsg.textContent = 'Testing connection, sending secure request to Groq...';
+    this.testStatusMsg.textContent = `Testing connection to Groq Cloud (${model})...`;
     
     this.testKeyBtn.disabled = true;
 
     try {
-      const isValid = await import('../ai.js').then(module => module.AIEngine.validateKey(key));
+      const isValid = await AIEngine.validateKey(key, model);
       
       this.testKeyBtn.disabled = false;
       if (isValid) {
         this.testStatusMsg.className = 'key-test-status success';
         this.testStatusMsg.style.color = 'var(--secondary)';
-        this.testStatusMsg.textContent = 'Success! Groq API connection established successfully.';
+        this.testStatusMsg.textContent = `Success! Groq API connection established with ${model}.`;
       } else {
         this.testStatusMsg.className = 'key-test-status error';
         this.testStatusMsg.style.color = 'var(--danger)';
-        this.testStatusMsg.textContent = 'Failed. The API key is invalid or returned a request error.';
+        this.testStatusMsg.textContent = 'Failed: The API key is invalid or returned an error from Groq.';
       }
     } catch (e) {
       this.testKeyBtn.disabled = false;
@@ -113,20 +140,25 @@ export class SettingsComponent {
 
   render(state) {
     const engine = state.settings.engine;
-    this.keyInput.value = state.settings.groqKey || '';
+    if (this.keyInput) {
+      this.keyInput.value = state.settings.groqKey || '';
+    }
+    if (this.modelSelect && state.settings.groqModel) {
+      this.modelSelect.value = state.settings.groqModel;
+    }
     if (this.googleClientIdInput) {
       this.googleClientIdInput.value = state.settings.googleClientId || '';
     }
 
-    // Adjust active visual highlights
+    // Visual highlights for selected engine
     if (engine === 'mock') {
-      this.mockOption.classList.add('active');
-      this.groqOption.classList.remove('active');
-      this.keySection.classList.add('hidden');
+      if (this.mockOption) this.mockOption.classList.add('active');
+      if (this.groqOption) this.groqOption.classList.remove('active');
+      if (this.keySection) this.keySection.classList.add('hidden');
     } else {
-      this.mockOption.classList.remove('active');
-      this.groqOption.classList.add('active');
-      this.keySection.classList.remove('hidden');
+      if (this.mockOption) this.mockOption.classList.remove('active');
+      if (this.groqOption) this.groqOption.classList.add('active');
+      if (this.keySection) this.keySection.classList.remove('hidden');
     }
   }
 }

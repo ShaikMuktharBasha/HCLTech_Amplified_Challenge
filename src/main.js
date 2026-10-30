@@ -105,7 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 3. Sync AI Engine with stored configurations
   const initialState = store.loadFromStorage();
-  aiEngine.updateSettings(initialState.settings.engine, initialState.settings.groqKey);
+  aiEngine.updateSettings(initialState.settings.engine, initialState.settings.groqKey, initialState.settings.groqModel);
 
   // Set initial tab from URL path if logged in
   const getTabFromPath = () => {
@@ -213,6 +213,9 @@ document.addEventListener('DOMContentLoaded', () => {
       themeToggleBtn.innerHTML = `<i data-lucide="${state.theme === 'dark' ? 'sun' : 'moon'}"></i>`;
       lucide.createIcons();
     }
+
+    // Sync AI Engine settings
+    aiEngine.updateSettings(state.settings.engine, state.settings.groqKey, state.settings.groqModel);
 
     // Trigger individual component renders
     dashboard.render(state);

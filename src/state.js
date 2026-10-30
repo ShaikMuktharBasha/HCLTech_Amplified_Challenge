@@ -23,13 +23,14 @@ const defaultState = {
   chatHistory: [
     {
       sender: 'bot',
-      text: "Hello! I'm **Aetheria**, your personal learning path assistant. I'm here to help you sequence and target your learning objectives.\n\nWhat skills or career goals are you focusing on today? For example, you can tell me: \n* *\"I want to learn frontend development starting from scratch\"*\n* *\"I want to transition into Data Science and build Python projects.\"*",
+      text: "Hello! I'm **Aetheria**, your AI Learning Coach powered by the **Groq Cloud API**.\n\nI can analyze your goals, diagnose skill gaps, answer technical questions, and generate a personalized, step-by-step visual learning roadmap tailored to your experience.\n\nWhat would you like to master today? For example, you can tell me:\n* *\"Create a complete Fullstack Web Developer roadmap starting from scratch\"*\n* *\"How do I transition into AI Engineering with Python and PyTorch?\"*\n* *\"Explain how JavaScript promises and the event loop work under the hood.\"*",
       timestamp: new Date().toISOString()
     }
   ],
   settings: {
-    engine: 'mock',
-    groqKey: '',
+    engine: 'groq',
+    groqModel: 'llama-3.3-70b-versatile',
+    groqKey: (typeof import.meta !== 'undefined' && import.meta.env?.VITE_GROQ_API_KEY) || '',
     googleClientId: '289632449735-segq0ho4fah42nrqgp57lbgddin5v1qg.apps.googleusercontent.com'
   },
   theme: 'dark'
@@ -49,6 +50,19 @@ class StateStore {
         // Fallback to default googleClientId if stored value is empty or missing
         if (parsed.settings && !parsed.settings.googleClientId && defaultState.settings.googleClientId) {
           parsed.settings.googleClientId = defaultState.settings.googleClientId;
+        }
+        // Auto-populate groqKey from environment if available and not set in storage
+        if (defaultState.settings.groqKey && (!parsed.settings || !parsed.settings.groqKey)) {
+          parsed.settings = parsed.settings || {};
+          parsed.settings.groqKey = defaultState.settings.groqKey;
+        }
+        // Ensure default groqModel
+        if (parsed.settings && !parsed.settings.groqModel) {
+          parsed.settings.groqModel = 'llama-3.3-70b-versatile';
+        }
+        // Upgrade legacy default 'mock' to 'groq' for AI Coach
+        if (parsed.settings && (!parsed.settings.engine || parsed.settings.engine === 'mock')) {
+          parsed.settings.engine = 'groq';
         }
         // Ensure structure compatibility
         return { 
@@ -146,6 +160,11 @@ class StateStore {
     this.notify();
   }
 
+  setGroqModel(model) {
+    this.state.settings.groqModel = model;
+    this.notify();
+  }
+
   setGoogleClientId(key) {
     this.state.settings.googleClientId = key;
     this.notify();
@@ -164,7 +183,7 @@ class StateStore {
     this.state.chatHistory = [
       {
         sender: 'bot',
-        text: "Hello! I'm **Aetheria**, your personal learning path assistant. I'm here to help you sequence and target your learning objectives.\n\nWhat skills or career goals are you focusing on today? For example, you can tell me: \n* *\"I want to learn frontend development starting from scratch\"*\n* *\"I want to transition into Data Science and build Python projects.\"*",
+        text: "Hello! I'm **Aetheria**, your AI Learning Coach powered by the **Groq Cloud API**.\n\nI can analyze your goals, diagnose skill gaps, answer technical questions, and generate a personalized, step-by-step visual learning roadmap tailored to your experience.\n\nWhat would you like to master today? For example, you can tell me:\n* *\"Create a complete Fullstack Web Developer roadmap starting from scratch\"*\n* *\"How do I transition into AI Engineering with Python and PyTorch?\"*\n* *\"Explain how JavaScript promises and the event loop work under the hood.\"*",
         timestamp: new Date().toISOString()
       }
     ];

@@ -3,7 +3,6 @@
    ========================================== */
 
 import { store } from '../state.js';
-import { aiEngine } from '../ai.js';
 
 export class ProfileComponent {
   constructor() {

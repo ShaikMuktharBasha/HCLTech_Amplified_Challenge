@@ -85,6 +85,24 @@ The output files will be built inside the `/dist` directory.
 
 ---
 
+## ⚡ Groq Cloud API Configuration
+
+AetherPath's AI Coach (**Aetheria**) answers questions live using the **Groq Cloud API** and Meta's flagship **Llama 3.3 70B Versatile** model for near-instant responses.
+
+### 🔑 Setting Up Your Free Groq API Key:
+1. Create a free account and generate an API key at **[console.groq.com/keys](https://console.groq.com/keys)**.
+2. Provide your key using any of the following methods:
+   * **In-Chat Banner**: Paste it directly into the setup banner inside the AI Coach (`/chat`) tab and click **Connect**.
+   * **Settings Tab**: Navigate to **Settings** (`/settings`), choose your desired Groq model (e.g. `llama-3.3-70b-versatile`), paste your key in **Groq Cloud API Credentials**, and click **Test API Connection**.
+   * **Environment File (`.env`)**: Copy `.env.example` to `.env` or `.env.local` and set:
+     ```bash
+     VITE_GROQ_API_KEY=gsk_your_groq_api_key_here
+     ```
+
+*(If you ever need to test without internet or an API key, you can switch to the offline **Local Simulator** mode in the Settings tab).*
+
+---
+
 ## ⚙️ Google OAuth Configuration
 
 To configure your own Google Sign-In button:

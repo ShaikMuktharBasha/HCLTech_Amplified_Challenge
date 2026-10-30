@@ -410,13 +410,52 @@
                     <i data-lucide="bot"></i>
                   </div>
                   <div class="coach-details">
-                    <h3>Aetheria</h3>
-                    <span class="coach-status"><span class="dot"></span> AI Learning Architect</span>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      <h3>Aetheria</h3>
+                      <button class="groq-model-pill connected" id="chat-groq-pill" type="button" title="Configure Groq Cloud API">
+                        <span class="pill-dot active" id="chat-groq-pill-dot"></span>
+                        <span id="chat-groq-pill-text">Groq: Llama 3.3 70B</span>
+                      </button>
+                    </div>
+                    <span class="coach-status"><span class="dot"></span> Groq-Powered AI Learning Coach</span>
                   </div>
                 </div>
-                <button class="btn btn-tertiary btn-icon-small" id="chat-clear-history" title="Clear Conversation">
-                  <i data-lucide="trash-2"></i>
-                </button>
+                <div class="chat-header-actions" style="display: flex; align-items: center; gap: 8px;">
+                  <button class="btn btn-secondary btn-sm" id="chat-config-key-btn" title="Groq API Key Settings" style="font-size: 0.8rem; padding: 6px 12px; display: inline-flex; align-items: center; gap: 6px;">
+                    <i data-lucide="key"></i> <span id="chat-config-key-btn-text">Groq Key</span>
+                  </button>
+                  <button class="btn btn-tertiary btn-icon-small" id="chat-clear-history" title="Clear Conversation">
+                    <i data-lucide="trash-2"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Inline Groq API Key Setup Banner -->
+              <div class="groq-setup-banner hidden" id="chat-groq-banner">
+                <div class="groq-banner-left">
+                  <div class="groq-badge-icon">
+                    <i data-lucide="zap"></i>
+                  </div>
+                  <div class="groq-banner-info">
+                    <h4>Groq Cloud API Key</h4>
+                    <p>Enter your free Groq API key to power Aetheria with <strong>Llama 3.3 70B</strong>. <a href="https://console.groq.com/keys" target="_blank" rel="noopener noreferrer">Get a free key here &rarr;</a></p>
+                  </div>
+                </div>
+                <div class="groq-banner-controls">
+                  <div class="groq-banner-input-wrapper">
+                    <input type="password" id="chat-inline-groq-key" placeholder="Enter key (gsk_...)" autocomplete="off">
+                    <button type="button" class="btn-eye-toggle" id="chat-toggle-inline-key-vis" title="Toggle Visibility">
+                      <i data-lucide="eye"></i>
+                    </button>
+                  </div>
+                  <button type="button" class="btn btn-primary btn-sm" id="chat-inline-save-btn">
+                    <i data-lucide="check"></i> Connect
+                  </button>
+                  <button type="button" class="btn btn-secondary btn-sm" id="chat-inline-simulator-btn" title="Use offline simulator without an API key">
+                    Use Simulator
+                  </button>
+                </div>
+                <div class="groq-banner-feedback" id="chat-inline-feedback"></div>
               </div>
 
               <!-- Message Stream -->
@@ -425,11 +464,11 @@
                 <div class="chat-message bot animate-fade-in">
                   <div class="msg-avatar"><i data-lucide="bot"></i></div>
                   <div class="msg-content">
-                    <p>Hello! I'm <strong>Aetheria</strong>, your personal learning path assistant. I'm here to help you
-                      sequence and target your learning objectives.</p>
-                    <p>What skills or career goals are you focusing on today? For example, you can tell me:
-                      <em>"I want to learn frontend development starting from scratch"</em> or
-                      <em>"I want to transition into Data Science and build Python projects."</em>
+                    <p>Hello! I'm <strong>Aetheria</strong>, your AI Learning Coach powered by the <strong>Groq Cloud API</strong>.</p>
+                    <p>I can analyze your goals, diagnose skill gaps, answer technical questions, and generate a personalized, step-by-step visual learning roadmap tailored to your experience.</p>
+                    <p>What would you like to master today? For example, you can tell me:
+                      <em>"Create a complete Fullstack Web Developer roadmap starting from scratch"</em> or
+                      <em>"How do I transition into AI Engineering with Python and PyTorch?"</em>
                     </p>
                   </div>
                   <div class="msg-time">Just Now</div>
@@ -447,6 +486,12 @@
                 </button>
                 <button class="quick-reply-btn" data-query="I want to learn Data Science. I am an absolute beginner.">
                   <i data-lucide="bar-chart-2"></i> Data Science
+                </button>
+                <button class="quick-reply-btn" data-query="Explain the difference between SQL and NoSQL databases with examples.">
+                  <i data-lucide="database"></i> SQL vs NoSQL
+                </button>
+                <button class="quick-reply-btn" data-query="What skills do I need to land my first software engineering job?">
+                  <i data-lucide="compass"></i> Career Advice
                 </button>
               </div>
 
@@ -615,28 +660,34 @@
               <div class="settings-section">
                 <h3>Select Intelligence Engine</h3>
                 <div class="engine-selector">
-                  <div class="engine-option active" id="engine-mock-option" data-engine="mock">
+                  <div class="engine-option active" id="engine-groq-option" data-engine="groq">
                     <div class="option-header">
                       <div class="radio-indicator"></div>
-                      <span class="title">Local Simulator (Default)</span>
+                      <span class="title">Groq Cloud Live API (Recommended)</span>
                     </div>
-                    <p class="desc">A fast, rules-based, offline planner with pre-programmed knowledge for fullstack,
-                      data science, and machine learning fields. Recommended for immediate prototyping.</p>
+                    <p class="desc">Connects the learning assistant directly to Groq to answer technical questions, explain recommendations, and generate unlimited dynamic learning paths powered by Meta Llama 3 models.</p>
                   </div>
 
-                  <div class="engine-option" id="engine-groq-option" data-engine="groq">
+                  <div class="engine-option" id="engine-mock-option" data-engine="mock">
                     <div class="option-header">
                       <div class="radio-indicator"></div>
-                      <span class="title">Groq Cloud Live API</span>
+                      <span class="title">Local Simulator (Offline Mode)</span>
                     </div>
-                    <p class="desc">Connects the learning assistant directly to Groq to answer custom
-                      questions, explain recommendations, and generate unlimited dynamic learning paths.</p>
+                    <p class="desc">A fast, rules-based, offline planner with pre-programmed knowledge for fullstack, data science, and machine learning fields. Recommended for offline testing.</p>
                   </div>
                 </div>
               </div>
 
-              <div class="settings-section hidden" id="groq-key-section">
+              <div class="settings-section" id="groq-key-section">
                 <h3>Groq Cloud API Credentials</h3>
+                <div class="form-group" style="margin-bottom: 12px;">
+                  <label for="settings-groq-model">Groq Model</label>
+                  <select id="settings-groq-model">
+                    <option value="llama-3.3-70b-versatile" selected>Meta Llama 3.3 70B Versatile (Recommended)</option>
+                    <option value="llama-3.1-8b-instant">Meta Llama 3.1 8B Instant (Ultra Fast)</option>
+                    <option value="mixtral-8x7b-32768">Mixtral 8x7B (MoE 32k Context)</option>
+                  </select>
+                </div>
                 <div class="form-group">
                   <label for="settings-groq-key">Groq API Key</label>
                   <div class="api-key-input-row">
@@ -646,8 +697,7 @@
                       <i data-lucide="eye"></i>
                     </button>
                   </div>
-                  <p class="help-text">Your API Key is saved locally in your browser's sessionStorage/localStorage and
-                    is never sent to external servers except direct Groq API endpoints.</p>
+                  <p class="help-text">Your API Key is saved locally in your browser storage and is sent only to official Groq API endpoints. <a href="https://console.groq.com/keys" target="_blank" rel="noopener noreferrer" style="color: var(--secondary); text-decoration: underline;">Get a free API key at console.groq.com &rarr;</a></p>
                 </div>
 
                 <button class="btn btn-secondary btn-with-icon" id="settings-btn-test-key">

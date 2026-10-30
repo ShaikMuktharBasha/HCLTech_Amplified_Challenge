@@ -1,9 +1,9 @@
 /* ==========================================
-   AETHERPATH CHAT COMPONENT
+   AETHERPATH CHAT COMPONENT (GROQ POWERED AI COACH)
    ========================================== */
 
 import { store } from '../state.js';
-import { aiEngine } from '../ai.js';
+import { aiEngine, AIEngine } from '../ai.js';
 
 export class ChatComponent {
   constructor() {
@@ -13,7 +13,22 @@ export class ChatComponent {
     this.clearBtn = document.getElementById('chat-clear-history');
     this.quickReplies = document.getElementById('chat-quick-replies');
 
+    // Groq UI Header & Banner Controls
+    this.groqPill = document.getElementById('chat-groq-pill');
+    this.groqPillText = document.getElementById('chat-groq-pill-text');
+    this.groqPillDot = document.getElementById('chat-groq-pill-dot');
+    this.configKeyBtn = document.getElementById('chat-config-key-btn');
+    this.configKeyBtnText = document.getElementById('chat-config-key-btn-text');
+
+    this.groqBanner = document.getElementById('chat-groq-banner');
+    this.inlineKeyInput = document.getElementById('chat-inline-groq-key');
+    this.toggleInlineKeyVis = document.getElementById('chat-toggle-inline-key-vis');
+    this.inlineSaveBtn = document.getElementById('chat-inline-save-btn');
+    this.inlineSimulatorBtn = document.getElementById('chat-inline-simulator-btn');
+    this.inlineFeedback = document.getElementById('chat-inline-feedback');
+
     this.isTyping = false;
+    this.bannerManuallyToggled = false;
     this.initEvents();
   }
 
@@ -49,8 +64,129 @@ export class ChatComponent {
     // Auto-resize textarea
     this.input.addEventListener('input', () => {
       this.input.style.height = 'auto';
-      this.input.style.height = (this.input.scrollHeight) + 'px';
+      this.input.style.height = Math.min(this.input.scrollHeight, 180) + 'px';
     });
+
+    // Copy code button delegation on message stream
+    this.stream.addEventListener('click', (e) => {
+      const copyBtn = e.target.closest('.copy-code-btn');
+      if (copyBtn) {
+        const codeBlock = copyBtn.closest('.code-block');
+        const codeEl = codeBlock ? codeBlock.querySelector('code') : null;
+        if (codeEl) {
+          navigator.clipboard.writeText(codeEl.innerText).then(() => {
+            const origHtml = copyBtn.innerHTML;
+            copyBtn.innerHTML = `<i data-lucide="check"></i> Copied!`;
+            copyBtn.classList.add('copied');
+            lucide.createIcons();
+            setTimeout(() => {
+              copyBtn.innerHTML = origHtml;
+              copyBtn.classList.remove('copied');
+              lucide.createIcons();
+            }, 2000);
+          }).catch(err => {
+            console.error('Failed to copy code: ', err);
+          });
+        }
+      }
+    });
+
+    // Toggle inline key banner on pill click or config key btn click
+    if (this.groqPill) {
+      this.groqPill.addEventListener('click', () => this.toggleKeyBanner());
+    }
+    if (this.configKeyBtn) {
+      this.configKeyBtn.addEventListener('click', () => this.toggleKeyBanner());
+    }
+
+    // Toggle inline password visibility
+    if (this.toggleInlineKeyVis && this.inlineKeyInput) {
+      this.toggleInlineKeyVis.addEventListener('click', () => {
+        const isPass = this.inlineKeyInput.type === 'password';
+        this.inlineKeyInput.type = isPass ? 'text' : 'password';
+        const icon = this.toggleInlineKeyVis.querySelector('i');
+        if (icon) {
+          icon.setAttribute('data-lucide', isPass ? 'eye-off' : 'eye');
+          lucide.createIcons();
+        }
+      });
+    }
+
+    // Save Groq key directly from inline banner
+    if (this.inlineSaveBtn && this.inlineKeyInput) {
+      this.inlineSaveBtn.addEventListener('click', () => this.handleSaveInlineKey());
+      this.inlineKeyInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          this.handleSaveInlineKey();
+        }
+      });
+    }
+
+    // Switch to simulator from inline banner
+    if (this.inlineSimulatorBtn) {
+      this.inlineSimulatorBtn.addEventListener('click', () => {
+        store.setEngine('mock');
+        aiEngine.updateSettings('mock', store.loadFromStorage().settings.groqKey);
+        this.setInlineFeedback('Switched to Local Simulator mode.', 'info');
+        setTimeout(() => {
+          if (this.groqBanner) this.groqBanner.classList.add('hidden');
+        }, 1200);
+      });
+    }
+  }
+
+  toggleKeyBanner() {
+    if (!this.groqBanner) return;
+    this.bannerManuallyToggled = true;
+    this.groqBanner.classList.toggle('hidden');
+    if (!this.groqBanner.classList.contains('hidden') && this.inlineKeyInput) {
+      this.inlineKeyInput.focus();
+    }
+  }
+
+  setInlineFeedback(msg, type = 'info') {
+    if (!this.inlineFeedback) return;
+    this.inlineFeedback.className = `groq-banner-feedback ${type}`;
+    this.inlineFeedback.textContent = msg;
+  }
+
+  async handleSaveInlineKey() {
+    const key = this.inlineKeyInput.value.trim();
+    if (!key) {
+      this.setInlineFeedback('Please enter a Groq API key (starts with gsk_)', 'error');
+      return;
+    }
+
+    this.setInlineFeedback('Validating key with Groq Cloud API...', 'info');
+    this.inlineSaveBtn.disabled = true;
+
+    try {
+      const state = store.loadFromStorage();
+      const model = state.settings.groqModel || 'llama-3.3-70b-versatile';
+      const isValid = await AIEngine.validateKey(key, model);
+
+      this.inlineSaveBtn.disabled = false;
+      if (isValid) {
+        store.setGroqKey(key);
+        store.setEngine('groq');
+        aiEngine.updateSettings('groq', key, model);
+
+        this.setInlineFeedback('Connected! Groq API is active with ' + model, 'success');
+        setTimeout(() => {
+          if (this.groqBanner) this.groqBanner.classList.add('hidden');
+        }, 1500);
+      } else {
+        // Still save key in case user wants to try anyway or network had a momentary blip
+        store.setGroqKey(key);
+        store.setEngine('groq');
+        aiEngine.updateSettings('groq', key, model);
+        this.setInlineFeedback('Key saved. (Validation ping returned non-200; verify key at console.groq.com)', 'warning');
+      }
+    } catch (e) {
+      this.inlineSaveBtn.disabled = false;
+      this.setInlineFeedback(`Error: ${e.message}`, 'error');
+    }
   }
 
   async handleSendMessage() {
@@ -69,9 +205,14 @@ export class ChatComponent {
     this.renderTypingIndicator();
 
     try {
-      // Get bot response from AI engine
-      const state = store.loadFromStorage(); // get latest state
-      const response = await aiEngine.processMessage(text, state.profile);
+      // Get bot response from AI engine with full context
+      const state = store.loadFromStorage();
+      const response = await aiEngine.processMessage(
+        text, 
+        state.profile, 
+        state.chatHistory, 
+        state.roadmap
+      );
       
       // Remove typing indicator
       this.removeTypingIndicator();
@@ -81,10 +222,10 @@ export class ChatComponent {
       if (response.type === 'PATH_GENERATION' && response.roadmap) {
         store.setRoadmap(response.trackId, response.roadmap);
         store.addChatMessage('bot', response.explanation);
-        // Switch to roadmap tab so they can see the visual path
+        // Switch to roadmap tab after a moment so they can view the visual canvas
         setTimeout(() => {
           store.setTab('roadmap');
-        }, 1500);
+        }, 1800);
       } else if (response.type === 'ADAPT_PROFILE' && response.profileUpdate) {
         store.updateProfile(response.profileUpdate);
         store.addChatMessage('bot', response.explanation);
@@ -93,15 +234,15 @@ export class ChatComponent {
         store.reconfigureRoadmap(pace, 'balanced', 'all');
         store.addChatMessage('bot', response.explanation);
       } else {
-        // Simple chat message
+        // Standard conversational answer
         store.addChatMessage('bot', response.explanation);
       }
 
     } catch (e) {
-      console.error(e);
+      console.error('Chat error:', e);
       this.removeTypingIndicator();
       this.isTyping = false;
-      store.addChatMessage('bot', "Sorry, I had an error processing that message. Please try again.");
+      store.addChatMessage('bot', `⚠️ I encountered an error while processing that message: ${e.message}`);
     }
   }
 
@@ -129,10 +270,54 @@ export class ChatComponent {
   }
 
   render(state) {
-    // Clear stream first
+    // 1. Sync Groq UI Status Elements
+    const isGroq = state.settings.engine === 'groq';
+    const activeKey = state.settings.groqKey || (typeof import.meta !== 'undefined' && import.meta.env?.VITE_GROQ_API_KEY) || '';
+    const hasKey = !!(activeKey && activeKey.trim());
+    const model = state.settings.groqModel || 'llama-3.3-70b-versatile';
+    const shortModelName = model.includes('70b') ? 'Llama 3.3 70B' : model.includes('8b') ? 'Llama 3.1 8B' : model;
+
+    if (this.groqPill && this.groqPillText && this.groqPillDot) {
+      if (isGroq) {
+        if (hasKey) {
+          this.groqPillText.textContent = `Groq: ${shortModelName}`;
+          this.groqPillDot.className = 'pill-dot active';
+          this.groqPill.className = 'groq-model-pill connected';
+        } else {
+          this.groqPillText.textContent = `Set Groq API Key`;
+          this.groqPillDot.className = 'pill-dot pending';
+          this.groqPill.className = 'groq-model-pill pending';
+        }
+      } else {
+        this.groqPillText.textContent = `Offline Simulator`;
+        this.groqPillDot.className = 'pill-dot mock';
+        this.groqPill.className = 'groq-model-pill mock';
+      }
+    }
+
+    if (this.configKeyBtnText) {
+      if (isGroq) {
+        this.configKeyBtnText.textContent = hasKey ? 'Groq Key ✓' : 'Connect Groq';
+      } else {
+        this.configKeyBtnText.textContent = 'Switch to Groq';
+      }
+    }
+
+    // Auto-show inline banner if Groq engine is active but no key is present, unless dismissed
+    if (this.groqBanner) {
+      if (isGroq && !hasKey && !this.bannerManuallyToggled) {
+        this.groqBanner.classList.remove('hidden');
+      } else if (hasKey && !this.bannerManuallyToggled) {
+        this.groqBanner.classList.add('hidden');
+      }
+      if (this.inlineKeyInput && !this.inlineKeyInput.value && activeKey) {
+        this.inlineKeyInput.value = activeKey;
+      }
+    }
+
+    // 2. Render Message Stream
     this.stream.innerHTML = '';
 
-    // Render message logs
     state.chatHistory.forEach(msg => {
       const isBot = msg.sender === 'bot';
       const bubbleClass = isBot ? 'bot' : 'user';
@@ -157,52 +342,99 @@ export class ChatComponent {
     this.stream.scrollTop = this.stream.scrollHeight;
   }
 
-  // Simple, robust client-side Markdown rendering (supports headers, bold, lists)
+  // Enhanced Client-Side Markdown Renderer with Fenced Code Blocks, Links & Lists
   renderMarkdown(text) {
     if (!text) return '';
     let html = text;
 
-    // Escape HTML tags to prevent XSS (except specific safe patterns)
-    html = html
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;");
+    // 1. Extract and preserve fenced code blocks (```language ... ```)
+    const codeBlocks = [];
+    html = html.replace(/```([a-zA-Z0-9_\-\.\+]*)\s*\n([\s\S]*?)```/g, (match, lang, code) => {
+      const id = `__CODE_BLOCK_${codeBlocks.length}__`;
+      const displayLang = (lang || 'code').toUpperCase();
+      const escapedCode = code
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
 
-    // Replace Bold headers (### Header)
+      const codeHtml = `
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">${displayLang}</span>
+            <button class="copy-code-btn" type="button" title="Copy code">
+              <i data-lucide="copy"></i> Copy
+            </button>
+          </div>
+          <pre><code class="language-${lang || 'text'}">${escapedCode}</code></pre>
+        </div>
+      `;
+      codeBlocks.push(codeHtml);
+      return id;
+    });
+
+    // 2. Escape any remaining raw HTML outside code blocks
+    html = html
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+
+    // 3. Inline code (`code`)
+    html = html.replace(/`([^`\n]+)`/g, '<code class="inline-code">$1</code>');
+
+    // 4. Markdown links [title](url)
+    html = html.replace(/\[([^\]]+)\]\((https?:\/\/[^\s\)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="chat-link">$1 <i data-lucide="external-link" class="link-icon"></i></a>');
+
+    // 5. Blockquotes (> quote)
+    html = html.replace(/^>\s+(.*)$/gm, '<blockquote>$1</blockquote>');
+    // Group consecutive blockquotes
+    html = html.replace(/(<\/blockquote>\s*<blockquote>)/g, '<br>');
+
+    // 6. Headers
+    html = html.replace(/^####\s+(.*)$/gm, '<h5>$1</h5>');
     html = html.replace(/^###\s+(.*)$/gm, '<h4>$1</h4>');
     html = html.replace(/^##\s+(.*)$/gm, '<h3>$1</h3>');
     html = html.replace(/^#\s+(.*)$/gm, '<h2>$1</h2>');
 
-    // Replace Bold (**text** or __text__)
+    // 7. Bold (**text** or __text__)
     html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
     html = html.replace(/__(.*?)__/g, '<strong>$1</strong>');
 
-    // Replace Italic (*text* or _text_)
+    // 8. Italic (*text* or _text_)
     html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
     html = html.replace(/_(.*?)_/g, '<em>$1</em>');
 
-    // Replace Unordered Lists (* item)
-    // Matches lines starting with * or - followed by space
-    html = html.replace(/^\s*[\*\-]\s+(.*)$/gm, '<li>$1</li>');
-    
-    // Wrap consecutive list items in <ul>
-    // This regex wraps sequences of <li>...</li> in a <ul> tag
-    html = html.replace(/(<li>.*<\/li>)/gs, '<ul>$1</ul>');
+    // 9. Ordered list items (1. item)
+    html = html.replace(/^\s*(\d+)\.\s+(.*)$/gm, '<li class="ol-item">$2</li>');
+    html = html.replace(/(<li class="ol-item">.*?<\/li>(\s*<li class="ol-item">.*?<\/li>)*)/gs, '<ol>$1</ol>');
 
-    // Fix double-wrapping of nested list items
-    html = html.replace(/<\/ul>\s*<ul>/g, '');
+    // 10. Unordered list items (* item or - item)
+    html = html.replace(/^\s*[\*\-]\s+(.*)$/gm, '<li class="ul-item">$1</li>');
+    html = html.replace(/(<li class="ul-item">.*?<\/li>(\s*<li class="ul-item">.*?<\/li>)*)/gs, '<ul>$1</ul>');
 
-    // Replace Linebreaks with paragraphs
-    // Splits text into paragraphs by double-newlines
+    // 11. Paragraphs
     const paragraphs = html.split(/\n\n+/);
     html = paragraphs.map(p => {
-      // If paragraph contains a block element (like ul, h2, h3, h4), don't wrap in <p>
-      if (p.trim().startsWith('<h') || p.trim().startsWith('<ul') || p.trim().startsWith('<ol')) {
-        return p;
+      const trimmed = p.trim();
+      if (!trimmed) return '';
+      // Don't wrap block elements in <p>
+      if (
+        trimmed.startsWith('<h') || 
+        trimmed.startsWith('<ul') || 
+        trimmed.startsWith('<ol') || 
+        trimmed.startsWith('<blockquote') ||
+        trimmed.startsWith('__CODE_BLOCK_')
+      ) {
+        return trimmed;
       }
-      return `<p>${p.replace(/\n/g, '<br>')}</p>`;
+      return `<p>${trimmed.replace(/\n/g, '<br>')}</p>`;
     }).join('');
+
+    // 12. Restore code blocks
+    codeBlocks.forEach((blockHtml, idx) => {
+      html = html.replace(`__CODE_BLOCK_${idx}__`, blockHtml);
+    });
 
     return html;
   }
 }
+export default ChatComponent;
